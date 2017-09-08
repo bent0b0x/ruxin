@@ -1,0 +1,12 @@
+{
+  "name": "ruxin",
+  "version": "0.0.0",
+  "description": "Redux/React code manager",
+  "main": "index.js",
+  "repository": "https://github.com/bent0b0x/ruxin.git",
+  "author": "Benjamin Baum",
+  "license": "MIT",
+  "dependencies": {
+    "acorn": "^5.1.2"
+  }
+}

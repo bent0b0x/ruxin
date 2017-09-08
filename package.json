@@ -12,16 +12,15 @@
     "precommit": "lint-staged",
     "prep": "mkdir build/",
     "clean": "rm -rf build/",
-    "dev": "yarn run clean && yarn run prep && webpack --watch --hot --progress --colors",
-    "build": "yarn run clean && yarn run prep && NODE_ENV=production webpack --progress --colors",
-    "test": "mocha-webpack --webpack-config webpack.config.js test/**/*.js",
+    "dev":
+      "yarn run clean && yarn run prep && webpack --watch --hot --progress --colors",
+    "build":
+      "yarn run clean && yarn run prep && NODE_ENV=production webpack --progress --colors",
+    "test": "mocha-webpack --webpack-config webpack.config.js \"test/**/*.js\"",
     "test:dev": "yarn test -- --watch"
   },
   "lint-staged": {
-    "*.js": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.js": ["prettier --write", "git add"]
   },
   "dependencies": {
     "acorn": "^5.1.2",

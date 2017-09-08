@@ -9,14 +9,8 @@ import type {
   Literal
 } from "types";
 
-export default (
-  module: string,
-  imports: Array<string>,
-  importDefault?: boolean,
-  defaultAlias?: string,
-  start?: number = 0
-): ImportDeclaration => {
-  let startLocation: number = start;
+export default (module: string, imports: Array<string>): ImportDeclaration => {
+  let startLocation: number = 0;
   const importSpecifiers: Array<
     ImportSpecifier
   > = imports.map((importName: string, index: number): ImportSpecifier => {

@@ -1,0 +1,32 @@
+[ignore]
+.*/react/node_modules/.*
+.*/fbjs/node_modules/.*
+.*/node_modules/invariant/.*
+.*/node_modules/eslint-plugin-jsx-a11y/.*
+
+[include]
+./node_modules/react
+./node_modules/fbjs/lib
+
+[libs]
+./node_modules/fbjs/flow/lib
+./interfaces/mocha
+
+flow
+
+[options]
+module.system=haste
+module.use_strict=true
+module.name_mapper='/app/styles/**/*\(.scss\)' -> 'CSSModule'
+module.file_ext=.js
+module.file_ext=.json
+module.name_mapper='^constants\/\(.*\)$' -> '<PROJECT_ROOT>/scripts/constants/\1'
+module.name_mapper='^constants$' -> '<PROJECT_ROOT>/scripts/constants'
+module.name_mapper='^types\/\(.*\)$' -> '<PROJECT_ROOT>/scripts/types/\1'
+module.name_mapper='^types$' -> '<PROJECT_ROOT>/scripts/types'
+module.name_mapper='^util\/\(.*\)$' -> '<PROJECT_ROOT>/scripts/util/\1'
+module.name_mapper='^util$' -> '<PROJECT_ROOT>/scripts/util'
+
+esproposal.class_static_fields=enable
+suppress_type=$FlowIssue
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(2[0-8]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\).*\n

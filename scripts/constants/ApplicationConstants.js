@@ -4,5 +4,19 @@ export const ASTTypes: Object = {
   ImportSpecifier: "ImportSpecifier",
   ImportDeclaration: "ImportDeclaration",
   Identifier: "Identifier",
-  Literal: "Literal"
+  Literal: "Literal",
+  ExportNamedDeclaration: "ExportNamedDeclaration",
+  VariableDeclaration: "VariableDeclaration",
+  VariableDeclarator: "VariableDeclarator",
+  Identifier: "Identifier",
+  ObjectExpression: "ObjectExpression",
+  Property: "Property",
+  ExportDefaultDeclaration: "ExportDefaultDeclaration",
+  CallExpression: "CallExpression",
+  ClassDeclaration: "ClassDeclaration",
+  TypeAnnotation: "TypeAnnotation",
+  StringTypeAnnotation: "StringTypeAnnotation",
+  NumberTypeAnnotation: "NumberTypeAnnotation",
+  ClassProperty: "ClassProperty",
+  UnaryExpression: "UnaryExpression"
 };

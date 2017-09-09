@@ -6,7 +6,12 @@ import addRequiredImports from "util/addRequiredImports";
 import addRequiredExports from "util/addRequiredExports";
 import createRecordSubclass from "util/createRecordSubclass";
 import { createDirIfNeeded } from "util/dir";
-import { findExportIndex } from "util/program";
+import {
+  findExportIndex,
+  findDefaultExportIndex,
+  findVariableDeclarationIndex
+} from "util/program";
+import toAST from "util/toAST";
 import generate from "babel-generator";
 import prettier from "prettier";
 const babylon = require("babylon");
@@ -23,6 +28,7 @@ import type {
   ASTItem,
   Program,
   VariableDeclarator,
+  VariableDeclaration,
   ExportNamedDeclaration,
   ClassDeclaration,
   ObjectProperty
@@ -115,6 +121,28 @@ const addState = (
   return newProgram;
 };
 
+const addReducerAndExport = (
+  stateFile: Program,
+  parentState: string
+): Program => {
+  const newStateFile: Program = Object.assign({}, stateFile);
+
+  if (findVariableDeclarationIndex(stateFile, "reducer") === -1) {
+    const reducer: VariableDeclaration = toAST(`const reducer = {}`, true);
+    newStateFile.body.push(reducer);
+  }
+
+  if (findDefaultExportIndex(stateFile) === -1) {
+    const defaultExport: ExportNamedDeclaration = toAST(
+      `export default handleActions(reducers, new ${parentState}());`,
+      true
+    );
+    newStateFile.body.push(defaultExport);
+  }
+
+  return newStateFile;
+};
+
 export default (
   state: string,
   properties: StateProperties,
@@ -127,6 +155,8 @@ export default (
   stateFile = addRequiredExports(RequiredExports, state, stateFile);
 
   stateFile = addState(state, properties, stateFile);
+
+  stateFile = addReducerAndExport(stateFile, baseState);
 
   const newStateString: string = prettier.format(generate(stateFile).code);
 

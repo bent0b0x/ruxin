@@ -100,6 +100,11 @@ export type ExportNamedDeclaration = ASTItem & {
   declaration: VariableDeclaration
 };
 
+export type ExportDefaultDeclaration = ASTItem & {
+  type: ASTTypes.ExportDefaultDeclaration,
+  declaration: ASTItem
+};
+
 export type ClassBody = ASTItem & {
   type: ASTTypes.ClassBody,
   body: Array<ClassProperty>

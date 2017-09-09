@@ -5,6 +5,7 @@ import createImport from "util/createImport";
 import createExport from "util/createExport";
 import addRequiredImports from "util/addRequiredImports";
 import createRecordSubclass from "util/createRecordSubclass";
+import { createDirIfNeeded } from "util/dir";
 import generate from "babel-generator";
 import prettier from "prettier";
 import findLastIndex from "lodash.findlastindex";
@@ -68,9 +69,7 @@ const getStateFileName = (config: Project, state: string): string =>
 
 const getOrCreateStateFile = (state: string, config: Project): Program => {
   const completeStateDir: string = getCompleteStateDir(config);
-  if (!fs.existsSync(completeStateDir)) {
-    fs.mkdirSync(completeStateDir);
-  }
+  createDirIfNeeded(completeStateDir);
 
   const stateFileName = getStateFileName(config, state);
 

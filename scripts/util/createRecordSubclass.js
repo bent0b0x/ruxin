@@ -6,14 +6,14 @@ import type {
   ImportDeclaration,
   ImportSpecifier,
   Identifier,
-  Literal,
   ExportNamedDeclaration,
-  Property,
   ClassProperty,
   ClassDeclaration
 } from "types";
-import toAST from "to-ast";
 import map from "lodash.map";
+import toAST from "util/toAST";
+
+const babylon = require("babylon");
 
 export default (name: string, props: StateProperties): ClassDeclaration => ({
   type: ASTTypes.ClassDeclaration,
@@ -27,17 +27,15 @@ export default (name: string, props: StateProperties): ClassDeclaration => ({
   end: 0,
   body: {
     type: ASTTypes.ClassBody,
-    body: map(props, (prop: ClassProperty, name: string) => ({
-      type: ASTTypes.ClassProperty,
-      key: {
-        type: ASTTypes.Identifier,
-        name: name
-      },
-      value: null,
-      typeAnnotation: {
-        type: ASTTypes.TypeAnnotation
-      }
-    })),
+    body: (() => {
+      const result = toAST(
+        `class A {\n${map(
+          props,
+          (prop: ClassProperty, name: string) => `${name}: ${prop.type}`
+        ).join(";\n")}}`
+      ).body.body;
+      return result;
+    })(),
     start: 0,
     end: 0
   },
@@ -53,7 +51,7 @@ export default (name: string, props: StateProperties): ClassDeclaration => ({
       {
         type: ASTTypes.ObjectExpression,
         properties: map(props, (prop: ClassProperty, name: string) => ({
-          type: ASTTypes.Property,
+          type: ASTTypes.ObjectProperty,
           key: {
             type: ASTTypes.Identifier,
             name: name

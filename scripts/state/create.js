@@ -5,12 +5,16 @@ import createImport from "util/createImport";
 import createExport from "util/createExport";
 import addRequiredImports from "util/addRequiredImports";
 import createRecordSubclass from "util/createRecordSubclass";
-import { generate } from "astring";
+import generate from "babel-generator";
 import prettier from "prettier";
 import findLastIndex from "lodash.findlastindex";
-import toAST from "to-ast";
+const babylon = require("babylon");
 
-const acorn = require("acorn");
+const parse = (input: string) =>
+  babylon.parse(input, {
+    sourceType: "module",
+    plugins: ["flow"]
+  });
 
 import type {
   Project,
@@ -22,8 +26,8 @@ import type {
   RequiredExport,
   VariableDeclarator,
   ExportNamedDeclaration,
-  Property,
-  ClassDeclaration
+  ClassDeclaration,
+  ObjectProperty
 } from "types";
 
 const requiredImports: Array<RequiredImport> = [
@@ -78,16 +82,12 @@ const getOrCreateStateFile = (state: string, config: Project): Program => {
     encoding: "utf8"
   });
 
-  const contents: Program = acorn.parse(fileContents, {
-    sourceType: "module"
-  });
+  const contents: Program = parse(fileContents).program;
+
   const newContents: Program = addRequiredImports(requiredImports, contents);
 
-  const newStateFile: string = prettier.format(generate(newContents));
-
-  return acorn.parse(newStateFile, {
-    sourceType: "module"
-  });
+  const newStateFile: string = prettier.format(generate(newContents).code);
+  return parse(newStateFile).program;
 };
 
 const getStateIndexInBody = (stateFile: Program): number =>
@@ -173,14 +173,14 @@ const addState = (
   ]: any): ExportNamedDeclaration);
 
   const existingStateExport: ?VariableDeclarator = (mainStateExport: any).declaration.declarations[0].init.properties.find(
-    (item: Property) => {
+    (item: ObjectProperty) => {
       return item.key.name === state;
     }
   );
 
   if (!existingStateExport) {
     (mainStateExport: any).declaration.declarations[0].init.properties.unshift({
-      type: ASTTypes.Property,
+      type: ASTTypes.ObjectProperty,
       key: {
         type: ASTTypes.Identifier,
         name: state
@@ -200,13 +200,17 @@ const addState = (
 export default (
   state: string,
   properties: StateProperties,
-  config: Project
+  config: Project,
+  parentState?: string
 ): void => {
-  let stateFile: Program = getOrCreateStateFile(state, config);
+  const baseState: string = parentState || state;
+  let stateFile: Program = getOrCreateStateFile(baseState, config);
+
   stateFile = addRequiredExports(state, stateFile, config);
+
   stateFile = addState(state, properties, stateFile);
 
-  const newStateString: string = prettier.format(generate(stateFile));
+  const newStateString: string = prettier.format(generate(stateFile).code);
 
-  fs.writeFileSync(getStateFileName(config, state), newStateString);
+  fs.writeFileSync(getStateFileName(config, baseState), newStateString);
 };

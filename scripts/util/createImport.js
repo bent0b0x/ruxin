@@ -6,7 +6,7 @@ import type {
   ImportDeclaration,
   ImportSpecifier,
   Identifier,
-  Literal
+  StringLiteral
 } from "types";
 
 export default (module: string, imports: Array<string>): ImportDeclaration => {
@@ -38,8 +38,8 @@ export default (module: string, imports: Array<string>): ImportDeclaration => {
 
   const finalEndLocation: number = startLocation + 1 + module.length + 2;
 
-  const source: Literal = {
-    type: ASTTypes.Literal,
+  const source: StringLiteral = {
+    type: ASTTypes.StringLiteral,
     start: startLocation + 1,
     end: finalEndLocation,
     value: module,

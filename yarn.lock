@@ -33,7 +33,7 @@ acorn@^4.0.3:
   version "4.0.13"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-4.0.13.tgz#105495ae5361d697bd195c825192e1ad7f253787"
 
-acorn@^5.0.0, acorn@^5.1.1, acorn@^5.1.2:
+acorn@^5.0.0, acorn@^5.1.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.1.2.tgz#911cb53e036807cf0fa778dc5d370fbd864246d7"
 
@@ -233,10 +233,6 @@ ast-types-flow@0.0.7:
 ast-types@^0.7.2:
   version "0.7.8"
   resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.7.8.tgz#902d2e0d60d071bdcd46dc115e1809ed11c138a9"
-
-astring@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/astring/-/astring-1.0.5.tgz#41280b5b38e12556ffa6c7216aa0c7d078583090"
 
 async-each@^1.0.0:
   version "1.0.1"

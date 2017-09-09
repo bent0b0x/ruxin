@@ -6,11 +6,12 @@ import type {
   ImportDeclaration,
   ImportSpecifier,
   Identifier,
-  Literal,
   ExportNamedDeclaration,
-  Property
+  ObjectProperty
 } from "types";
-import toAST from "to-ast";
+import toAST from "util/toAST";
+
+const babylon = require("babylon");
 
 export default (
   name: string,

@@ -33,11 +33,23 @@ export type ASTItem = {
   end: number
 };
 
-export type Literal = ASTItem & {
-  type: ASTTypes.Literal,
+export type StringLiteral = ASTItem & {
+  type: ASTTypes.StringLiteral,
   value: string,
   raw: string
 };
+
+export type NumericLiteral = ASTItem & {
+  type: ASTTypes.NumericLiteral,
+  value: number
+};
+
+export type BooleanLiteral = ASTItem & {
+  type: ASTTypes.BooleanLiteral,
+  value: boolean
+};
+
+type Literal = StringLiteral | NumericLiteral | BooleanLiteral;
 
 export type Identifier = ASTItem & {
   type: ASTTypes.Identifier,
@@ -53,18 +65,18 @@ export type ImportSpecifier = ASTItem & {
 export type ImportDeclaration = ASTItem & {
   type: ASTTypes.ImportDeclaration,
   specifiers: Array<ImportSpecifier>,
-  source: Literal
+  source: StringLiteral
 };
 
-export type Property = ASTItem & {
-  type: ASTTypes.Property,
+export type ObjectProperty = ASTItem & {
+  type: ASTTypes.ObjectProperty,
   key: Identifier,
   value: Literal
 };
 
 export type ObjectExpression = ASTItem & {
   type: ASTTypes.ObjectExpression,
-  properties: Array<Property>
+  properties: Array<ObjectProperty>
 };
 
 export type VariableDeclarator = ASTItem & {

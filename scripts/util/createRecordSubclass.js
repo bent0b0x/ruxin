@@ -1,19 +1,8 @@
 /* @flow */
 import { ASTTypes } from "constants/ApplicationConstants";
-import type {
-  Project,
-  StateProperties,
-  ImportDeclaration,
-  ImportSpecifier,
-  Identifier,
-  ExportNamedDeclaration,
-  ClassProperty,
-  ClassDeclaration
-} from "types";
+import type { StateProperties, ClassProperty, ClassDeclaration } from "types";
 import map from "lodash.map";
 import toAST from "util/toAST";
-
-const babylon = require("babylon");
 
 export default (name: string, props: StateProperties): ClassDeclaration => ({
   type: ASTTypes.ClassDeclaration,

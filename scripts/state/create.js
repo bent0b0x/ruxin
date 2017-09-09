@@ -5,7 +5,6 @@ import {
   RequiredImports,
   RequiredExports
 } from "constants/ApplicationConstants";
-import createImport from "util/createImport";
 import createExport from "util/createExport";
 import addRequiredImports from "util/addRequiredImports";
 import createRecordSubclass from "util/createRecordSubclass";
@@ -25,10 +24,8 @@ const parse = (input: string) =>
 import type {
   Project,
   StateProperties,
-  ImportDeclaration,
   ASTItem,
   Program,
-  RequiredImport,
   RequiredExport,
   VariableDeclarator,
   ExportNamedDeclaration,
@@ -64,11 +61,7 @@ const getOrCreateStateFile = (state: string, config: Project): Program => {
   return parse(newStateFile).program;
 };
 
-const addRequiredExports = (
-  state: string,
-  stateFile: Program,
-  config: Project
-): Program => {
+const addRequiredExports = (state: string, stateFile: Program): Program => {
   const lastImportIndex: number = findLastIndex(
     stateFile.body,
     (item: ASTItem) => item.type === ASTTypes.ImportDeclaration
@@ -78,7 +71,7 @@ const addRequiredExports = (
 
   let insertIndex: number = lastImportIndex === -1 ? 0 : lastImportIndex;
 
-  RequiredExports.forEach((requiredExport: RequiredExport, index: number) => {
+  RequiredExports.forEach((requiredExport: RequiredExport) => {
     const exportExists: boolean = !!newStateFile.body.find(
       (item: ASTItem) =>
         item.type === ASTTypes.ExportNamedDeclaration &&
@@ -172,7 +165,7 @@ export default (
   const baseState: string = parentState || state;
   let stateFile: Program = getOrCreateStateFile(baseState, config);
 
-  stateFile = addRequiredExports(state, stateFile, config);
+  stateFile = addRequiredExports(state, stateFile);
 
   stateFile = addState(state, properties, stateFile);
 

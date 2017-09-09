@@ -1,19 +1,7 @@
 /* @flow */
 import { ASTTypes } from "constants/ApplicationConstants";
 
-import type {
-  Project,
-  StateProperties,
-  ImportDeclaration,
-  ASTItem,
-  Program,
-  RequiredImport,
-  RequiredExport,
-  VariableDeclarator,
-  ExportNamedDeclaration,
-  ClassDeclaration,
-  ObjectProperty
-} from "types";
+import type { ASTItem, Program, ExportNamedDeclaration } from "types";
 
 export const findExportIndex = (
   stateFile: Program,

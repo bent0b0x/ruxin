@@ -3,8 +3,6 @@ import { ASTTypes } from "constants/ApplicationConstants";
 import createImport from "util/createImport";
 
 import type {
-  Project,
-  StateProperties,
   ImportDeclaration,
   ASTItem,
   Program,

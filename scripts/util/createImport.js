@@ -1,8 +1,6 @@
 /* @flow */
 import { ASTTypes } from "constants/ApplicationConstants";
 import type {
-  Project,
-  StateProperties,
   ImportDeclaration,
   ImportSpecifier,
   Identifier,

@@ -1,6 +1,8 @@
 /* @flow */
 import { ASTTypes } from "constants/ApplicationConstants";
 
+export type Foo = {};
+
 export type ClassProperty = {
   type: string,
   default: any

@@ -1,4 +1,3 @@
-import babelToAST from "babel-types";
 const babylon = require("babylon");
 
 export default (input: any) =>

@@ -1,17 +1,7 @@
 /* @flow */
 import { ASTTypes } from "constants/ApplicationConstants";
-import type {
-  Project,
-  StateProperties,
-  ImportDeclaration,
-  ImportSpecifier,
-  Identifier,
-  ExportNamedDeclaration,
-  ObjectProperty
-} from "types";
+import type { ExportNamedDeclaration } from "types";
 import toAST from "util/toAST";
-
-const babylon = require("babylon");
 
 export default (
   name: string,

@@ -1,18 +1,14 @@
 /* @flow */
 import fs from "fs";
-import {
-  ASTTypes,
-  RequiredImports,
-  RequiredExports
-} from "constants/ApplicationConstants";
-import createExport from "util/createExport";
+import { ASTTypes } from "constants/ApplicationConstants";
+import { RequiredImports, RequiredExports } from "constants/StateConstants";
 import addRequiredImports from "util/addRequiredImports";
+import addRequiredExports from "util/addRequiredExports";
 import createRecordSubclass from "util/createRecordSubclass";
 import { createDirIfNeeded } from "util/dir";
 import { findExportIndex } from "util/program";
 import generate from "babel-generator";
 import prettier from "prettier";
-import findLastIndex from "lodash.findlastindex";
 const babylon = require("babylon");
 
 const parse = (input: string) =>
@@ -26,7 +22,6 @@ import type {
   StateProperties,
   ASTItem,
   Program,
-  RequiredExport,
   VariableDeclarator,
   ExportNamedDeclaration,
   ClassDeclaration,
@@ -59,42 +54,6 @@ const getOrCreateStateFile = (state: string, config: Project): Program => {
 
   const newStateFile: string = prettier.format(generate(newContents).code);
   return parse(newStateFile).program;
-};
-
-const addRequiredExports = (state: string, stateFile: Program): Program => {
-  const lastImportIndex: number = findLastIndex(
-    stateFile.body,
-    (item: ASTItem) => item.type === ASTTypes.ImportDeclaration
-  );
-
-  const newStateFile: Program = Object.assign({}, stateFile);
-
-  let insertIndex: number = lastImportIndex === -1 ? 0 : lastImportIndex;
-
-  RequiredExports.forEach((requiredExport: RequiredExport) => {
-    const exportExists: boolean = !!newStateFile.body.find(
-      (item: ASTItem) =>
-        item.type === ASTTypes.ExportNamedDeclaration &&
-        !!((item: any): ExportNamedDeclaration).declaration.declarations.find(
-          (declaration: VariableDeclarator) =>
-            declaration.id.name === requiredExport.name
-        )
-    );
-    if (!exportExists) {
-      newStateFile.body = [
-        ...newStateFile.body.slice(0, insertIndex + 1),
-        createExport(
-          requiredExport.name,
-          requiredExport.init,
-          lastImportIndex === -1 ? 0 : stateFile.body[lastImportIndex].end + 1
-        ),
-        ...newStateFile.body.slice(insertIndex + 1)
-      ];
-      insertIndex += 1;
-    }
-  });
-
-  return newStateFile;
 };
 
 const addState = (
@@ -165,7 +124,7 @@ export default (
   const baseState: string = parentState || state;
   let stateFile: Program = getOrCreateStateFile(baseState, config);
 
-  stateFile = addRequiredExports(state, stateFile);
+  stateFile = addRequiredExports(RequiredExports, state, stateFile);
 
   stateFile = addState(state, properties, stateFile);
 

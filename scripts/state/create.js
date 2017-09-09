@@ -1,11 +1,16 @@
 /* @flow */
 import fs from "fs";
-import { ASTTypes } from "constants/ApplicationConstants";
+import {
+  ASTTypes,
+  RequiredImports,
+  RequiredExports
+} from "constants/ApplicationConstants";
 import createImport from "util/createImport";
 import createExport from "util/createExport";
 import addRequiredImports from "util/addRequiredImports";
 import createRecordSubclass from "util/createRecordSubclass";
 import { createDirIfNeeded } from "util/dir";
+import { findExportIndex } from "util/program";
 import generate from "babel-generator";
 import prettier from "prettier";
 import findLastIndex from "lodash.findlastindex";
@@ -31,36 +36,6 @@ import type {
   ObjectProperty
 } from "types";
 
-const requiredImports: Array<RequiredImport> = [
-  {
-    module: "immutable",
-    imports: ["Record"]
-  },
-  {
-    module: "redux-actions",
-    imports: ["handleActions", "createAction"]
-  }
-];
-
-const requiredExports: Array<RequiredExport> = [
-  {
-    name: "ActionConstants",
-    init: {}
-  },
-  {
-    name: "Actions",
-    init: {}
-  },
-  {
-    name: "State",
-    init: {}
-  },
-  {
-    name: "Selectors",
-    init: {}
-  }
-];
-
 const getCompleteStateDir = (config: Project): string =>
   `${config.baseDir}${config.stateDir}`;
 
@@ -83,19 +58,11 @@ const getOrCreateStateFile = (state: string, config: Project): Program => {
 
   const contents: Program = parse(fileContents).program;
 
-  const newContents: Program = addRequiredImports(requiredImports, contents);
+  const newContents: Program = addRequiredImports(RequiredImports, contents);
 
   const newStateFile: string = prettier.format(generate(newContents).code);
   return parse(newStateFile).program;
 };
-
-const getStateIndexInBody = (stateFile: Program): number =>
-  stateFile.body.findIndex(
-    (item: ASTItem | ExportNamedDeclaration) =>
-      item.type === ASTTypes.ExportNamedDeclaration &&
-      ((item: any): ExportNamedDeclaration).declaration.declarations[0].id
-        .name === "State"
-  );
 
 const addRequiredExports = (
   state: string,
@@ -111,7 +78,7 @@ const addRequiredExports = (
 
   let insertIndex: number = lastImportIndex === -1 ? 0 : lastImportIndex;
 
-  requiredExports.forEach((requiredExport: RequiredExport, index: number) => {
+  RequiredExports.forEach((requiredExport: RequiredExport, index: number) => {
     const exportExists: boolean = !!newStateFile.body.find(
       (item: ASTItem) =>
         item.type === ASTTypes.ExportNamedDeclaration &&
@@ -144,7 +111,7 @@ const addState = (
 ): Program => {
   const newProgram: Program = Object.assign({}, stateFile);
 
-  const stateIndex: number = getStateIndexInBody(newProgram);
+  const stateIndex: number = findExportIndex(newProgram, "State");
   let subClassExists: boolean = false;
 
   if (stateIndex !== -1) {

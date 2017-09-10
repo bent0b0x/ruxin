@@ -8,21 +8,15 @@ import {
 import {
   findExportIndex,
   findVariableDeclarationIndex,
-  addExpressionToProgram
+  addExpressionToProgram,
+  addShorthandExport
 } from "util/program";
 import parse from "../parser";
 import camelCase from "camelcase";
 import generate from "babel-generator";
 import prettier from "prettier";
-import { ASTTypes } from "constants/ApplicationConstants";
 
-import type {
-  Project,
-  Program,
-  ExportNamedDeclaration,
-  ObjectProperty,
-  VariableDeclarator
-} from "types";
+import type { Project, Program, ExportNamedDeclaration } from "types";
 
 const addActionConstant = (
   state: string,
@@ -58,27 +52,7 @@ const addActionConstant = (
     actionConstantsExportIndex
   ]: any): ExportNamedDeclaration);
 
-  const existingConstantExport: ?VariableDeclarator = (actionConstantsExport: any).declaration.declarations[0].init.properties.find(
-    (item: ObjectProperty) => item.key.name === action
-  );
-
-  if (!existingConstantExport) {
-    (actionConstantsExport: any).declaration.declarations[0].init.properties.push(
-      {
-        type: ASTTypes.ObjectProperty,
-        key: {
-          type: ASTTypes.Identifier,
-          name: action
-        },
-        value: {
-          type: ASTTypes.Identifier,
-          name: action
-        },
-        kind: "init",
-        shorthand: true
-      }
-    );
-  }
+  addShorthandExport(actionConstantsExport, action);
 
   return program;
 };
@@ -133,25 +107,7 @@ export const addAction = (
     actionsExportIndex
   ]: any): ExportNamedDeclaration);
 
-  const existingActionExport: ?VariableDeclarator = (actionsExport: any).declaration.declarations[0].init.properties.find(
-    (item: ObjectProperty) => item.key.name === actionCreatorName
-  );
-
-  if (!existingActionExport) {
-    (actionsExport: any).declaration.declarations[0].init.properties.push({
-      type: ASTTypes.ObjectProperty,
-      key: {
-        type: ASTTypes.Identifier,
-        name: actionCreatorName
-      },
-      value: {
-        type: ASTTypes.Identifier,
-        name: actionCreatorName
-      },
-      kind: "init",
-      shorthand: true
-    });
-  }
+  addShorthandExport(actionsExport, actionCreatorName);
 
   contents = addActionConstant(state, action, contents);
 

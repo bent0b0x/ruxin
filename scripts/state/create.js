@@ -14,23 +14,24 @@ import {
   findExportIndex,
   findDefaultExportIndex,
   findVariableDeclarationIndex,
-  addExpressionToProgram
+  addExpressionToProgram,
+  addShorthandExport
 } from "util/program";
 import toAST from "util/toAST";
 import generate from "babel-generator";
 import prettier from "prettier";
 import parse from "../parser";
+import forEach from "lodash.foreach";
 
 import type {
   Project,
   StateProperties,
   ASTItem,
   Program,
-  VariableDeclarator,
   VariableDeclaration,
   ExportNamedDeclaration,
   ClassDeclaration,
-  ObjectProperty
+  ClassProperty
 } from "types";
 
 const getOrCreateStateFile = (state: string, config: Project): Program => {
@@ -85,27 +86,7 @@ const addState = (
     stateIndex + (subClassExists ? 0 : 1)
   ]: any): ExportNamedDeclaration);
 
-  const existingStateExport: ?VariableDeclarator = (mainStateExport: any).declaration.declarations[0].init.properties.find(
-    (item: ObjectProperty) => {
-      return item.key.name === state;
-    }
-  );
-
-  if (!existingStateExport) {
-    (mainStateExport: any).declaration.declarations[0].init.properties.unshift({
-      type: ASTTypes.ObjectProperty,
-      key: {
-        type: ASTTypes.Identifier,
-        name: state
-      },
-      value: {
-        type: ASTTypes.Identifier,
-        name: state
-      },
-      kind: "init",
-      shorthand: true
-    });
-  }
+  addShorthandExport(mainStateExport, state);
 
   return newProgram;
 };
@@ -123,13 +104,50 @@ const addReducerAndExport = (
 
   if (findDefaultExportIndex(stateFile) === -1) {
     const defaultExport: ExportNamedDeclaration = toAST(
-      `export default handleActions(reducers, new ${parentState}());`,
+      `export default handleActions(reducer, new ${parentState}());`,
       true
     );
     newStateFile.body.push(defaultExport);
   }
 
   return newStateFile;
+};
+
+const createSelectorsForState = (
+  state: string,
+  props: StateProperties,
+  program: Program
+): Program => {
+  const newProgram: Program = Object.assign({}, program);
+  const selectorsIndex: number = findExportIndex(newProgram, "Selectors");
+
+  if (selectorsIndex === -1) {
+    throw new Error("Selectors export is missing");
+  }
+
+  const selectorExport: ExportNamedDeclaration = ((program.body[
+    selectorsIndex
+  ]: any): ExportNamedDeclaration);
+
+  forEach(props, (prop: ClassProperty, propName: string): void => {
+    let selectorExportIndex: number = findVariableDeclarationIndex(
+      program,
+      propName
+    );
+
+    if (selectorExportIndex === -1) {
+      addExpressionToProgram(
+        `const ${propName}: (state: ${state}) => ${prop.type} = (state: ${state}): ${prop.type} => state.get("${propName}");`,
+        newProgram,
+        selectorsIndex
+      );
+      selectorExportIndex += 1;
+    }
+
+    addShorthandExport(selectorExport, propName);
+  });
+
+  return newProgram;
 };
 
 export default (
@@ -146,6 +164,10 @@ export default (
   stateFile = addState(state, properties, stateFile);
 
   stateFile = addReducerAndExport(stateFile, baseState);
+
+  if (state === baseState) {
+    stateFile = createSelectorsForState(state, properties, stateFile);
+  }
 
   const newStateString: string = prettier.format(generate(stateFile).code);
 

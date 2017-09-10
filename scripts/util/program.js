@@ -7,7 +7,9 @@ import type {
   Program,
   ExportNamedDeclaration,
   ExportDefaultDeclaration,
-  VariableDeclaration
+  VariableDeclaration,
+  ObjectProperty,
+  VariableDeclarator
 } from "types";
 
 export const findExportIndex = (
@@ -47,4 +49,28 @@ export const addExpressionToProgram = (
     typeof expression === "string" ? toAST(expression, true) : expression,
     ...program.body.slice(index)
   ];
+};
+
+export const addShorthandExport = (
+  exportDef: ExportNamedDeclaration,
+  name: string
+): void => {
+  const existingExport: ?VariableDeclarator = (exportDef: any).declaration.declarations[0].init.properties.find(
+    (item: ObjectProperty) => item.key.name === name
+  );
+  if (!existingExport) {
+    (exportDef: any).declaration.declarations[0].init.properties.push({
+      type: ASTTypes.ObjectProperty,
+      key: {
+        type: ASTTypes.Identifier,
+        name: name
+      },
+      value: {
+        type: ASTTypes.Identifier,
+        name: name
+      },
+      kind: "init",
+      shorthand: true
+    });
+  }
 };

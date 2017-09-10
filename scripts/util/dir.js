@@ -17,3 +17,9 @@ export const getStateFileName = (config: Project, state: string): string =>
 
 export const getReducerFileName = (config: Project): string =>
   `${getCompleteStateDir(config)}/index.js`;
+
+export const createFileIfNeeded = (fileName: string): void => {
+  if (!fs.existsSync(fileName)) {
+    fs.writeFileSync(fileName, "");
+  }
+};

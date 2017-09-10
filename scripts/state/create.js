@@ -13,7 +13,8 @@ import {
   createDirIfNeeded,
   getCompleteStateDir,
   getStateFileName,
-  getReducerFileName
+  getReducerFileName,
+  createFileIfNeeded
 } from "util/dir";
 import {
   findExportIndex,
@@ -46,9 +47,7 @@ const getOrCreateStateFile = (state: string, config: Project): Program => {
 
   const stateFileName = getStateFileName(config, state);
 
-  if (!fs.existsSync(stateFileName)) {
-    fs.writeFileSync(stateFileName, "");
-  }
+  createFileIfNeeded(stateFileName);
 
   const fileContents: string = fs.readFileSync(stateFileName, {
     encoding: "utf8"
@@ -162,9 +161,7 @@ const getOrCreateReducerFile = (config: Project): Program => {
 
   const reducerFileName = getReducerFileName(config);
 
-  if (!fs.existsSync(reducerFileName)) {
-    fs.writeFileSync(reducerFileName, "");
-  }
+  createFileIfNeeded(reducerFileName);
 
   let fileContents: string = fs.readFileSync(reducerFileName, {
     encoding: "utf8"

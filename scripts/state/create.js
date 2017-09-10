@@ -5,7 +5,11 @@ import { RequiredImports, RequiredExports } from "constants/StateConstants";
 import addRequiredImports from "util/addRequiredImports";
 import addRequiredExports from "util/addRequiredExports";
 import createRecordSubclass from "util/createRecordSubclass";
-import { createDirIfNeeded } from "util/dir";
+import {
+  createDirIfNeeded,
+  getCompleteStateDir,
+  getStateFileName
+} from "util/dir";
 import {
   findExportIndex,
   findDefaultExportIndex,
@@ -14,13 +18,7 @@ import {
 import toAST from "util/toAST";
 import generate from "babel-generator";
 import prettier from "prettier";
-const babylon = require("babylon");
-
-const parse = (input: string) =>
-  babylon.parse(input, {
-    sourceType: "module",
-    plugins: ["flow"]
-  });
+import parse from "../parser";
 
 import type {
   Project,
@@ -33,12 +31,6 @@ import type {
   ClassDeclaration,
   ObjectProperty
 } from "types";
-
-const getCompleteStateDir = (config: Project): string =>
-  `${config.baseDir}${config.stateDir}`;
-
-const getStateFileName = (config: Project, state: string): string =>
-  `${getCompleteStateDir(config)}/${state}.js`;
 
 const getOrCreateStateFile = (state: string, config: Project): Program => {
   const completeStateDir: string = getCompleteStateDir(config);

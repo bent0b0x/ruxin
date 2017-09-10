@@ -10,7 +10,10 @@ export const createDirIfNeeded = (dirName: string): void => {
 };
 
 export const getCompleteStateDir = (config: Project): string =>
-  `${config.baseDir}${config.stateDir}`;
+  `${config.baseDir}${config.stateDir || "/state"}`;
 
 export const getStateFileName = (config: Project, state: string): string =>
   `${getCompleteStateDir(config)}/${state}.js`;
+
+export const getReducerFileName = (config: Project): string =>
+  `${getCompleteStateDir(config)}/index.js`;

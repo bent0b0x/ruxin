@@ -9,7 +9,8 @@ import type {
   ExportDefaultDeclaration,
   VariableDeclaration,
   ObjectProperty,
-  VariableDeclarator
+  VariableDeclarator,
+  ObjectExpression
 } from "types";
 
 export const findExportIndex = (
@@ -60,6 +61,31 @@ export const addShorthandExport = (
   );
   if (!existingExport) {
     (exportDef: any).declaration.declarations[0].init.properties.push({
+      type: ASTTypes.ObjectProperty,
+      key: {
+        type: ASTTypes.Identifier,
+        name: name
+      },
+      value: {
+        type: ASTTypes.Identifier,
+        name: name
+      },
+      kind: "init",
+      shorthand: true
+    });
+  }
+};
+
+export const addShorthandProperty = (
+  expression: ObjectExpression,
+  name: string
+): void => {
+  const existingProp: ?ObjectProperty = expression.properties.find(
+    (prop: ObjectProperty) => prop.key.name === name
+  );
+
+  if (!existingProp) {
+    (expression: any).properties.push({
       type: ASTTypes.ObjectProperty,
       key: {
         type: ASTTypes.Identifier,

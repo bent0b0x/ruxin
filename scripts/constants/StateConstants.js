@@ -12,6 +12,13 @@ export const RequiredImports: Array<RequiredImport> = [
   }
 ];
 
+export const RequiredIndexImports: Array<RequiredImport> = [
+  {
+    module: "redux",
+    imports: ["combineReducers"]
+  }
+];
+
 export const RequiredExports: Array<RequiredExport> = [
   {
     name: "ActionConstants",

@@ -2,8 +2,7 @@ import createState from "scripts/state/create";
 import { addAction } from "scripts/state/add";
 
 const config = {
-  baseDir: "/Users/bbaum/Desktop/dev/scratch",
-  stateDir: "/state"
+  baseDir: "/Users/bbaum/Desktop/dev/scratch"
 };
 
 createState(
@@ -35,6 +34,21 @@ createState(
   },
   config,
   "Baz"
+);
+
+createState(
+  "Foobar",
+  {
+    id: {
+      type: "Array<Foo>",
+      default: []
+    },
+    name: {
+      type: "string",
+      default: ""
+    }
+  },
+  config
 );
 
 addAction("Baz", "TEST_ACTION", config);

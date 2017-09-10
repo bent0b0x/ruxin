@@ -1,21 +1,27 @@
 /* @flow */
 import fs from "fs";
 import { ASTTypes } from "constants/ApplicationConstants";
-import { RequiredImports, RequiredExports } from "constants/StateConstants";
+import {
+  RequiredImports,
+  RequiredExports,
+  RequiredIndexImports
+} from "constants/StateConstants";
 import addRequiredImports from "util/addRequiredImports";
 import addRequiredExports from "util/addRequiredExports";
 import createRecordSubclass from "util/createRecordSubclass";
 import {
   createDirIfNeeded,
   getCompleteStateDir,
-  getStateFileName
+  getStateFileName,
+  getReducerFileName
 } from "util/dir";
 import {
   findExportIndex,
   findDefaultExportIndex,
   findVariableDeclarationIndex,
   addExpressionToProgram,
-  addShorthandExport
+  addShorthandExport,
+  addShorthandProperty
 } from "util/program";
 import toAST from "util/toAST";
 import generate from "babel-generator";
@@ -150,6 +156,48 @@ const createSelectorsForState = (
   return newProgram;
 };
 
+const getOrCreateReducerFile = (config: Project): Program => {
+  const reducerDir: string = getCompleteStateDir(config);
+  createDirIfNeeded(reducerDir);
+
+  const reducerFileName = getReducerFileName(config);
+
+  if (!fs.existsSync(reducerFileName)) {
+    fs.writeFileSync(reducerFileName, "");
+  }
+
+  let fileContents: string = fs.readFileSync(reducerFileName, {
+    encoding: "utf8"
+  });
+
+  let contents: Program = parse(fileContents).program;
+
+  contents = addRequiredImports(RequiredIndexImports, contents);
+
+  if (findDefaultExportIndex(contents) === -1) {
+    contents.body.push(toAST(`export default combineReducers({});`, true));
+  }
+
+  return contents;
+};
+
+const addStateToReducer = (state: string, program: Program): Program => {
+  const newProgram: Program = Object.assign({}, program);
+
+  const defaultExportIndex: number = findDefaultExportIndex(newProgram);
+
+  if (defaultExportIndex === -1) {
+    throw new Error("Default reducer export is missing");
+  }
+
+  addShorthandProperty(
+    (newProgram.body[defaultExportIndex]: any).declaration.arguments[0],
+    state
+  );
+
+  return newProgram;
+};
+
 export default (
   state: string,
   properties: StateProperties,
@@ -167,6 +215,13 @@ export default (
 
   if (state === baseState) {
     stateFile = createSelectorsForState(state, properties, stateFile);
+    let reducer: Program = getOrCreateReducerFile(config);
+
+    reducer = addStateToReducer(state, reducer);
+
+    const newReducerFile: string = prettier.format(generate(reducer).code);
+
+    fs.writeFileSync(getReducerFileName(config), newReducerFile);
   }
 
   const newStateString: string = prettier.format(generate(stateFile).code);

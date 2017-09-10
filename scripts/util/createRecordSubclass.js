@@ -45,7 +45,7 @@ export default (name: string, props: StateProperties): ClassDeclaration => ({
             type: ASTTypes.Identifier,
             name: name
           },
-          value: toAST(prop.default),
+          value: toAST(JSON.stringify(prop.default)),
           kind: "init"
         })),
         start: 0,

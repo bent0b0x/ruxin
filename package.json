@@ -31,6 +31,7 @@
     "lodash.findlastindex": "^4.6.0",
     "lodash.foreach": "^4.5.0",
     "lodash.map": "^4.6.0",
+    "lodash.reduce": "^4.6.0",
     "mocha-webpack": "^0.7.0",
     "redux": "^3.7.2",
     "to-ast": "^1.0.0",

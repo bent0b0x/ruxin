@@ -24,6 +24,18 @@ export const findExportIndex = (
         .name === exportName
   );
 
+export const findTypeExportIndex = (
+  stateFile: Program,
+  typeName: string
+): number =>
+  stateFile.body.findIndex(
+    (item: ASTItem | ExportNamedDeclaration) =>
+      item.type === ASTTypes.ExportNamedDeclaration &&
+      ((item: any): ExportNamedDeclaration).declaration.type ===
+        ASTTypes.TypeAlias &&
+      (item: any).declaration.id.name === typeName
+  );
+
 export const findDefaultExportIndex = (stateFile: Program): number =>
   stateFile.body.findIndex(
     (item: ASTItem | ExportDefaultDeclaration) =>

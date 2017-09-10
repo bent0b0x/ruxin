@@ -1,5 +1,6 @@
 /* @flow */
 import fs from "fs";
+import prettier from "prettier";
 
 import type { Project } from "types";
 
@@ -18,8 +19,14 @@ export const getStateFileName = (config: Project, state: string): string =>
 export const getReducerFileName = (config: Project): string =>
   `${getCompleteStateDir(config)}/index.js`;
 
+export const getTypesFileName = (config: Project): string =>
+  `${config.baseDir}/types.js`;
+
+export const initFileContents = (fileName: string): string =>
+  fileName.slice(-3) === ".js" ? "/* @flow */" : "";
+
 export const createFileIfNeeded = (fileName: string): void => {
   if (!fs.existsSync(fileName)) {
-    fs.writeFileSync(fileName, "");
+    fs.writeFileSync(fileName, prettier.format(initFileContents(fileName)));
   }
 };

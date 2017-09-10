@@ -2,6 +2,7 @@
 
 export const ASTTypes: Object = {
   Program: "Program",
+  TypeAlias: "TypeAlias",
   ImportSpecifier: "ImportSpecifier",
   ImportDeclaration: "ImportDeclaration",
   Identifier: "Identifier",

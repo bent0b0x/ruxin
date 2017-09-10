@@ -9,6 +9,7 @@ import {
 import addRequiredImports from "util/addRequiredImports";
 import addRequiredExports from "util/addRequiredExports";
 import createRecordSubclass from "util/createRecordSubclass";
+import { addType } from "types/add";
 import {
   createDirIfNeeded,
   getCompleteStateDir,
@@ -64,9 +65,10 @@ const getOrCreateStateFile = (state: string, config: Project): Program => {
 const addState = (
   state: string,
   properties: StateProperties,
-  stateFile: Program
+  stateFile: Program,
+  config: Project
 ): Program => {
-  const newProgram: Program = Object.assign({}, stateFile);
+  let newProgram: Program = Object.assign({}, stateFile);
 
   const stateIndex: number = findExportIndex(newProgram, "State");
   let subClassExists: boolean = false;
@@ -92,6 +94,8 @@ const addState = (
   ]: any): ExportNamedDeclaration);
 
   addShorthandExport(mainStateExport, state);
+
+  addType(state, properties, config);
 
   return newProgram;
 };
@@ -206,7 +210,7 @@ export default (
 
   stateFile = addRequiredExports(RequiredExports, state, stateFile);
 
-  stateFile = addState(state, properties, stateFile);
+  stateFile = addState(state, properties, stateFile, config);
 
   stateFile = addReducerAndExport(stateFile, baseState);
 

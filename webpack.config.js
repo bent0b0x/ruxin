@@ -29,7 +29,8 @@ var config = {
       containers: scriptsDir + "/containers",
       selectors: scriptsDir + "/selectors",
       util: scriptsDir + "/util",
-      adapters: scriptsDir + "/adapters"
+      adapters: scriptsDir + "/adapters",
+      types: scriptsDir + "/types"
     }
   },
   module: {

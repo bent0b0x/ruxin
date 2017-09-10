@@ -1,5 +1,6 @@
 /* @flow */
 import { ASTTypes } from "constants/ApplicationConstants";
+import toAST from "util/toAST";
 
 import type {
   ASTItem,
@@ -35,3 +36,15 @@ export const findVariableDeclarationIndex = (
       item.type === ASTTypes.VariableDeclaration &&
       ((item: any): VariableDeclaration).declarations[0].id.name === decName
   );
+
+export const addExpressionToProgram = (
+  expression: string | ASTItem,
+  program: Program,
+  index: number
+): void => {
+  program.body = [
+    ...program.body.slice(0, index),
+    typeof expression === "string" ? toAST(expression, true) : expression,
+    ...program.body.slice(index)
+  ];
+};

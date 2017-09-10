@@ -13,7 +13,8 @@ import {
 import {
   findExportIndex,
   findDefaultExportIndex,
-  findVariableDeclarationIndex
+  findVariableDeclarationIndex,
+  addExpressionToProgram
 } from "util/program";
 import toAST from "util/toAST";
 import generate from "babel-generator";
@@ -76,11 +77,7 @@ const addState = (
         properties
       );
 
-      newProgram.body = [
-        ...newProgram.body.slice(0, stateIndex),
-        stateClass,
-        ...newProgram.body.slice(stateIndex)
-      ];
+      addExpressionToProgram(stateClass, newProgram, stateIndex);
     }
   }
 

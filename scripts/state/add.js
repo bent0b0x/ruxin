@@ -5,10 +5,13 @@ import {
   getCompleteStateDir,
   getStateFileName
 } from "util/dir";
-import { findExportIndex, findVariableDeclarationIndex } from "util/program";
+import {
+  findExportIndex,
+  findVariableDeclarationIndex,
+  addExpressionToProgram
+} from "util/program";
 import parse from "../parser";
 import camelCase from "camelcase";
-import toAST from "util/toAST";
 import generate from "babel-generator";
 import prettier from "prettier";
 import { ASTTypes } from "constants/ApplicationConstants";
@@ -42,14 +45,11 @@ const addActionConstant = (
   );
 
   if (actionConstantIndex === -1) {
-    program.body = [
-      ...program.body.slice(0, actionConstantsExportIndex),
-      toAST(
-        `const ${action}: string = "${state.toUpperCase()}_${action}";`,
-        true
-      ),
-      ...program.body.slice(actionConstantsExportIndex)
-    ];
+    addExpressionToProgram(
+      `const ${action}: string = "${state.toUpperCase()}_${action}";`,
+      program,
+      actionConstantsExportIndex
+    );
 
     actionConstantsExportIndex += 1;
   }
@@ -120,11 +120,11 @@ export const addAction = (
   if (actionIndex === -1) {
     contents = (Object.assign({}, contents): Program);
 
-    contents.body = [
-      ...contents.body.slice(0, actionsExportIndex),
-      toAST(`const ${actionCreatorName} = createAction(${action});`, true),
-      ...contents.body.slice(actionsExportIndex)
-    ];
+    addExpressionToProgram(
+      `const ${actionCreatorName} = createAction(${action});`,
+      contents,
+      actionsExportIndex
+    );
 
     actionsExportIndex += 1;
   }

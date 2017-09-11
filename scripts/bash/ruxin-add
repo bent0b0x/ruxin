@@ -62,13 +62,9 @@ program
   .option("-p, --props", "initial state properties")
   .action(function(state, action, options) {
     if (action) {
-      api.action.add(
-        state,
-        action,
-        {
-          baseDir: process.cwd()
-        }
-      )
+      api.action.add(state, action, {
+        baseDir: process.cwd()
+      });
     } else {
       if (options.props) {
         prompt.start();

@@ -58,12 +58,25 @@ const getProps = (state, props = {}) => {
 
 program
   .version("0.0.0")
+  .arguments("<state> [action]")
   .option("-p, --props", "initial state properties")
-  .action(async function(state, options) {
-    if (options.props) {
-      prompt.start();
+  .action(function(state, action, options) {
+    if (action) {
+      api.action.add(
+        state,
+        action,
+        {
+          baseDir: process.cwd()
+        }
+      )
+    } else {
+      if (options.props) {
+        prompt.start();
 
-      getProps(state);
+        getProps(state);
+      } else {
+        commmitState(state, {});
+      }
     }
   });
 

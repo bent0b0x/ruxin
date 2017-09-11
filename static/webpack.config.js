@@ -1,7 +1,8 @@
 var webpack = require("webpack");
 var path = require("path");
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-var appDir = path.resolve(__dirname);
+var appDir = path.resolve(__dirname, "app");
 var scriptsDir = appDir + "/scripts";
 var assetsDir = appDir + "/assets";
 var stylesDir = appDir + "/styles";
@@ -14,14 +15,7 @@ var config = {
   entry: scriptsDir + "/index.js",
   output: {
     path: buildDir,
-    filename: "bundle.js",
-    library: "ruxin",
-    libraryTarget: "commonjs-module",
-    libraryExport: "default"
-  },
-  target: "node",
-  node: {
-    __dirname: false
+    filename: "bundle.js"
   },
   resolve: {
     alias: {
@@ -34,9 +28,8 @@ var config = {
       states: scriptsDir + "/states",
       containers: scriptsDir + "/containers",
       selectors: scriptsDir + "/selectors",
-      util: scriptsDir + "/util",
-      adapters: scriptsDir + "/adapters",
-      types: scriptsDir + "/types"
+      apis: scriptsDir + "/apis",
+      adapters: scriptsDir + "/adapters"
     }
   },
   module: {
@@ -68,7 +61,21 @@ var config = {
           }
         ]
       },
-
+      {
+        test: /index.scss$/,
+        include: stylesDir,
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: [
+            {
+              loader: "css-loader"
+            },
+            {
+              loader: "sass-loader"
+            }
+          ]
+        })
+      },
       {
         test: /\.(png|jpg|gif)$/,
         include: assetsDir,
@@ -79,7 +86,8 @@ var config = {
         ]
       }
     ]
-  }
+  },
+  plugins: [new ExtractTextPlugin((!prod ? buildDir : ".") + "/styles.css")]
 };
 
 module.exports = config;

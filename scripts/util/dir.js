@@ -10,8 +10,10 @@ export const createDirIfNeeded = (dirName: string): void => {
   }
 };
 
+export const getScriptsPath = (): string => "/app/scripts";
+
 export const getCompleteStateDir = (config: Project): string =>
-  `${config.baseDir}${config.stateDir || "/state"}`;
+  `${config.baseDir}${config.stateDir || getScriptsPath() + "/state"}`;
 
 export const getStateFileName = (config: Project, state: string): string =>
   `${getCompleteStateDir(config)}/${state}.js`;
@@ -20,10 +22,10 @@ export const getReducerFileName = (config: Project): string =>
   `${getCompleteStateDir(config)}/index.js`;
 
 export const getTypesFileName = (config: Project): string =>
-  `${config.baseDir}/types.js`;
+  `${config.baseDir}${getScriptsPath()}/types.js`;
 
 export const initFileContents = (fileName: string): string =>
-  fileName.slice(-3) === ".js" ? "/* @flow */" : "";
+  fileName.slice(-3) === ".js" ? "/* @flow */ \n" : "";
 
 export const createFileIfNeeded = (fileName: string): void => {
   if (!fs.existsSync(fileName)) {

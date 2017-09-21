@@ -7,9 +7,9 @@
   "author": "Benjamin Baum",
   "license": "MIT",
   "bin": {
-    "ruxin": "scripts/bash/ruxin",
-    "ruxin-create": "scripts/bash/ruxin-create",
-    "ruxin-add": "scripts/bash/ruxin-add"
+    "ruxin": "scripts/bash/ruxin.js",
+    "ruxin-create": "scripts/bash/ruxin-create.js",
+    "ruxin-add": "scripts/bash/ruxin-add.js"
   },
   "scripts": {
     "lint": "eslint scripts",
@@ -17,16 +17,16 @@
     "precommit": "lint-staged",
     "prep": "mkdir build/",
     "clean": "rm -rf build/",
-    "dev": "yarn run clean && yarn run prep && webpack --watch --hot --progress --colors",
-    "build": "yarn run clean && yarn run prep && NODE_ENV=production webpack --progress --colors",
+    "dev":
+      "yarn run clean && yarn run prep && webpack --watch --hot --progress --colors",
+    "build":
+      "yarn run clean && yarn run prep && NODE_ENV=production webpack --progress --colors",
     "test": "mocha-webpack --webpack-config webpack.config.js \"test/**/*.js\"",
     "test:dev": "yarn test -- --watch"
   },
   "lint-staged": {
-    "*.js": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.js": ["prettier --write", "git add"],
+    "": ["prettier --write", "git add"]
   },
   "dependencies": {
     "babel-generator": "^6.26.0",

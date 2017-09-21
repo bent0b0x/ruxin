@@ -15,12 +15,13 @@ export default (
 ): Program => {
   const imports: Array<ImportDeclaration> = [];
   let lengthIncrease: number = 0;
-  const includeFlowPragma: boolean =
+  const includeFlowPragma: boolean = !!(
     stateFile.body &&
     stateFile.body[0] &&
     stateFile.body[0].leadingComments &&
     stateFile.body[0].leadingComments.length &&
-    stateFile.body[0].leadingComments[0].value.trim() === "@flow";
+    stateFile.body[0].leadingComments[0].value.trim() === "@flow"
+  );
   requiredImports.forEach((requiredImport: RequiredImport, index: number) => {
     if (
       !stateFile.body.find((item: ASTItem): boolean => {

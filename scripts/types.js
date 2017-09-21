@@ -62,7 +62,8 @@ export type Identifier = ASTItem & {
 };
 
 export type ImportDefaultSpecifier = ASTItem & {
-  type: ASTTypes.ImportSpecifier,
+  type: ASTTypes.ImportDefaultSpecifier,
+  imported: Identifier,
   local: Identifier
 };
 

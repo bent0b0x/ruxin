@@ -40,8 +40,7 @@ import type {
   VariableDeclaration,
   ExportNamedDeclaration,
   ClassDeclaration,
-  ClassProperty,
-  ImportDeclaration
+  ClassProperty
 } from "types";
 
 const getOrCreateStateFile = (state: string, config: Project): Program => {

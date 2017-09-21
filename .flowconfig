@@ -3,6 +3,7 @@
 .*/fbjs/node_modules/.*
 .*/node_modules/invariant/.*
 .*/node_modules/eslint-plugin-jsx-a11y/.*
+.*/static/.*
 
 [include]
 ./node_modules/react

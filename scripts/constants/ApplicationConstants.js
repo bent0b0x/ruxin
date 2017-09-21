@@ -32,4 +32,3 @@ export const ASTTypes: Object = {
   CommentBlock: "CommentBlock",
   CommentLine: "CommentLine"
 };
-

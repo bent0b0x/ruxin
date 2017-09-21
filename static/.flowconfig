@@ -40,6 +40,8 @@ module.name_mapper='^containers\/\(.*\)$' -> '<PROJECT_ROOT>/app/scripts/contain
 module.name_mapper='^containers$' -> '<PROJECT_ROOT>/app/scripts/containers'
 module.name_mapper='^adapters\/\(.*\)$' -> '<PROJECT_ROOT>/app/scripts/adapters/\1'
 module.name_mapper='^adapters$' -> '<PROJECT_ROOT>/app/scripts/adapters'
+module.name_mapper='^state\/\(.*\)$' -> '<PROJECT_ROOT>/app/scripts/state/\1'
+module.name_mapper='^state$' -> '<PROJECT_ROOT>/app/scripts/state'
 
 esproposal.class_static_fields=enable
 suppress_type=$FlowIssue

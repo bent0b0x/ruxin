@@ -23,7 +23,8 @@ import {
   findVariableDeclarationIndex,
   addExpressionToProgram,
   addShorthandExport,
-  addShorthandProperty
+  addShorthandProperty,
+  findImportIndex
 } from "util/program";
 import toAST from "util/toAST";
 import generate from "babel-generator";
@@ -39,7 +40,8 @@ import type {
   VariableDeclaration,
   ExportNamedDeclaration,
   ClassDeclaration,
-  ClassProperty
+  ClassProperty,
+  ImportDeclaration
 } from "types";
 
 const getOrCreateStateFile = (state: string, config: Project): Program => {
@@ -182,8 +184,35 @@ const getOrCreateReducerFile = (config: Project): Program => {
   return contents;
 };
 
-const addStateToReducer = (state: string, program: Program): Program => {
-  const newProgram: Program = Object.assign({}, program);
+const addStateImport = (state: string, program: Program): Program => {
+  const importPath: string = `state/${state}`;
+  const importIndex: number = findImportIndex(program, importPath);
+  if (importIndex === -1) {
+    program = addRequiredImports(
+      [
+        {
+          module: importPath,
+          imports: [state],
+          default: true
+        }
+      ],
+      program
+    );
+  }
+
+  return program;
+};
+
+const addStateToReducer = (
+  state: string,
+  program: Program,
+  parentState?: string
+): Program => {
+  let newProgram: Program = Object.assign({}, program);
+
+  if (!parentState) {
+    newProgram = addStateImport(state, program);
+  }
 
   const defaultExportIndex: number = findDefaultExportIndex(newProgram);
 
@@ -218,7 +247,7 @@ export default (
     stateFile = createSelectorsForState(state, properties, stateFile);
     let reducer: Program = getOrCreateReducerFile(config);
 
-    reducer = addStateToReducer(state, reducer);
+    reducer = addStateToReducer(state, reducer, parentState);
 
     const newReducerFile: string = prettier.format(generate(reducer).code);
 

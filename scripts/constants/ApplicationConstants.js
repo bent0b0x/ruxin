@@ -4,6 +4,7 @@ export const ASTTypes: Object = {
   Program: "Program",
   TypeAlias: "TypeAlias",
   ImportSpecifier: "ImportSpecifier",
+  ImportDefaultSpecifier: "ImportDefaultSpecifier",
   ImportDeclaration: "ImportDeclaration",
   Identifier: "Identifier",
   StringLiteral: "StringLiteral",
@@ -27,5 +28,8 @@ export const ASTTypes: Object = {
   GenericTypeAnnotation: "GenericTypeAnnotation",
   ClassProperty: "ClassProperty",
   ClassBody: "ClassBody",
-  UnaryExpression: "UnaryExpression"
+  UnaryExpression: "UnaryExpression",
+  CommentBlock: "CommentBlock",
+  CommentLine: "CommentLine"
 };
+

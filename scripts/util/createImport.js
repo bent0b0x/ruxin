@@ -4,13 +4,17 @@ import type {
   ImportDeclaration,
   ImportSpecifier,
   Identifier,
-  StringLiteral
+  StringLiteral,
+  CommentBlock,
+  CommentLine
 } from "types";
 
 export default (
   module: string,
   imports: Array<string>,
-  type?: boolean
+  defaultImport?: boolean,
+  type?: boolean,
+  leadingComments?: Array<CommentBlock | CommentLine> = []
 ): ImportDeclaration => {
   let startLocation: number = 0;
   const importSpecifiers: Array<
@@ -29,8 +33,12 @@ export default (
       name: importName
     };
 
+    console.log("default: ", defaultImport);
+
     return {
-      type: ASTTypes.ImportSpecifier,
+      type: defaultImport
+        ? ASTTypes.ImportDefaultSpecifier
+        : ASTTypes.ImportSpecifier,
       start: specifierStart,
       end: specifierEnd,
       imported: identifier,
@@ -54,6 +62,7 @@ export default (
     end: finalEndLocation,
     specifiers: importSpecifiers,
     importKind: type ? "type" : "value",
-    source
+    source,
+    leadingComments
   };
 };

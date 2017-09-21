@@ -25,7 +25,7 @@ var config = {
       components: scriptsDir + "/components",
       constants: scriptsDir + "/constants",
       actions: scriptsDir + "/actions",
-      states: scriptsDir + "/states",
+      state: scriptsDir + "/state",
       containers: scriptsDir + "/containers",
       selectors: scriptsDir + "/selectors",
       apis: scriptsDir + "/apis",

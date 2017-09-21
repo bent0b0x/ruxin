@@ -10,8 +10,19 @@ import type {
   VariableDeclaration,
   ObjectProperty,
   VariableDeclarator,
-  ObjectExpression
+  ObjectExpression,
+  ImportDeclaration
 } from "types";
+
+export const findImportIndex = (
+  program: Program,
+  importModule: string
+): number =>
+  program.body.findIndex(
+    (item: ASTItem | ImportDeclaration) =>
+      item.type === ASTTypes.ImportDeclaration &&
+      ((item: any): ImportDeclaration).source.value === importModule
+  );
 
 export const findExportIndex = (
   stateFile: Program,

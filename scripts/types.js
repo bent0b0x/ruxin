@@ -20,6 +20,7 @@ export type StateProperties = {
 export type RequiredImport = {
   module: string,
   imports: Array<string>,
+  default?: boolean,
   type?: boolean
 };
 
@@ -33,7 +34,8 @@ export type ASTType = $Keys<typeof ASTTypes>;
 export type ASTItem = {
   type: ASTType,
   start: number,
-  end: number
+  end: number,
+  leadingComments?: Array<CommentBlock | CommentLine>
 };
 
 export type StringLiteral = ASTItem & {
@@ -59,6 +61,11 @@ export type Identifier = ASTItem & {
   name: string
 };
 
+export type ImportDefaultSpecifier = ASTItem & {
+  type: ASTTypes.ImportSpecifier,
+  local: Identifier
+};
+
 export type ImportSpecifier = ASTItem & {
   type: ASTTypes.ImportSpecifier,
   imported: Identifier,
@@ -67,7 +74,7 @@ export type ImportSpecifier = ASTItem & {
 
 export type ImportDeclaration = ASTItem & {
   type: ASTTypes.ImportDeclaration,
-  specifiers: Array<ImportSpecifier>,
+  specifiers: Array<ImportDefaultSpecifier | ImportSpecifier>,
   source: StringLiteral
 };
 
@@ -123,6 +130,13 @@ export type ClassDeclaration = ASTItem & {
   body: ClassBody,
   superClass: Identifier | CallExpression
 };
+
+export type CommentLine = ASTItem & {
+  type: ASTTypes.CommentLine,
+  value: string
+};
+
+export type CommentBlock = CommentLine;
 
 export type Program = ASTItem & {
   type: ASTTypes.Program,

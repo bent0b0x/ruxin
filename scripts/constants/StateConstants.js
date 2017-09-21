@@ -9,6 +9,11 @@ export const RequiredImports: Array<RequiredImport> = [
   {
     module: "redux-actions",
     imports: ["handleActions", "createAction"]
+  },
+  {
+    module: "scripts/types",
+    imports: ["Action"],
+    type: true
   }
 ];
 

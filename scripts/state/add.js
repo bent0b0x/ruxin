@@ -98,7 +98,7 @@ const stubReducer = (
   ) {
     reducer.init.properties.push(
       toAST(
-        `{[${actionConstantName}]: (state: ${state}, action): ${state} => {
+        `{[${actionConstantName}]: (state: ${state}, action: Action<void>): ${state} => {
       return state;
     }}`
       ).properties[0]

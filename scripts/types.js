@@ -19,7 +19,8 @@ export type StateProperties = {
 
 export type RequiredImport = {
   module: string,
-  imports: Array<string>
+  imports: Array<string>,
+  type?: boolean
 };
 
 export type RequiredExport = {

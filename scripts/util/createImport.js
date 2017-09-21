@@ -7,7 +7,11 @@ import type {
   StringLiteral
 } from "types";
 
-export default (module: string, imports: Array<string>): ImportDeclaration => {
+export default (
+  module: string,
+  imports: Array<string>,
+  type?: boolean
+): ImportDeclaration => {
   let startLocation: number = 0;
   const importSpecifiers: Array<
     ImportSpecifier
@@ -49,6 +53,7 @@ export default (module: string, imports: Array<string>): ImportDeclaration => {
     start: 0,
     end: finalEndLocation,
     specifiers: importSpecifiers,
+    importKind: type ? "type" : "value",
     source
   };
 };

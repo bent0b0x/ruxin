@@ -33,8 +33,6 @@ export default (
       name: importName
     };
 
-    console.log("default: ", defaultImport);
-
     return {
       type: defaultImport
         ? ASTTypes.ImportDefaultSpecifier

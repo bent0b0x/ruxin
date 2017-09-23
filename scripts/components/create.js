@@ -17,7 +17,10 @@ export const createComponent = (
 
   const stateToUse: string = parentState || state;
 
-  if (!fs.existsSync(`${getCompleteStateDir(config)}/${stateToUse}.js`)) {
+  if (
+    stateToUse &&
+    !fs.existsSync(`${getCompleteStateDir(config)}/${stateToUse}.js`)
+  ) {
     throw new Error(`The file for state "${stateToUse}" does not exist`);
   }
 

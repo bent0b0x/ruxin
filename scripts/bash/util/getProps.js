@@ -1,6 +1,6 @@
 var prompt = require("prompt");
 
-var getProps = (state, props = {}, dir, cb) => {
+var getProps = (state, props = {}, dir, cb, options) => {
   prompt.start();
   prompt.message = "";
   prompt.get(
@@ -27,13 +27,13 @@ var getProps = (state, props = {}, dir, cb) => {
                   type: type,
                   default: result.default
                 };
-                getProps(state, props, dir, cb);
+                getProps(state, props, dir, cb, options);
               }
             );
           }
         );
       } else {
-        cb(state, props, dir);
+        cb(state, props, dir, options);
       }
     }
   );

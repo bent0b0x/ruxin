@@ -26,6 +26,11 @@ export const getComponentsPath = (): string => `${getScriptsPath()}/components`;
 export const getCompleteComponentsDir = (config: Project): string =>
   `${config.baseDir}${getComponentsPath()}`;
 
+export const getContainersPath = (): string => `${getScriptsPath()}/containers`;
+
+export const getCompleteContainersDir = (config: Project): string =>
+  `${config.baseDir}${getContainersPath()}`;
+
 export const getTypesFileName = (config: Project): string =>
   `${config.baseDir}${getScriptsPath()}/types.js`;
 

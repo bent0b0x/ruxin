@@ -20,7 +20,8 @@ import {
   addExpressionToProgram,
   addShorthandExport,
   addShorthandProperty,
-  findImportIndex
+  findImportIndex,
+  findClassDeclarationIndex
 } from "util/program";
 import toAST from "util/toAST";
 import parse from "../parser";
@@ -82,7 +83,7 @@ const addState = (
 ): Program => {
   let newProgram: Program = Object.assign({}, stateFile);
 
-  const stateIndex: number = findExportIndex(newProgram, "State");
+  let stateIndex: number = findExportIndex(newProgram, "State");
   let subClassExists: boolean = false;
 
   if (stateIndex !== -1) {
@@ -96,6 +97,15 @@ const addState = (
         state,
         properties
       );
+
+      if (parentState) {
+        const parentExportIndex: number = findClassDeclarationIndex(
+          stateFile,
+          parentState
+        );
+        stateIndex =
+          parentExportIndex !== -1 ? parentExportIndex - 1 : stateIndex;
+      }
 
       addExpressionToProgram(stateClass, newProgram, stateIndex);
     }

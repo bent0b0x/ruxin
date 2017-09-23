@@ -9,6 +9,7 @@ import {
 } from "util/dir";
 import {
   findExportIndex,
+  findImportIndex,
   findVariableDeclarationIndex,
   findClassDeclarationIndex,
   addExpressionToProgram,
@@ -35,7 +36,8 @@ import type {
   StateProperty,
   ClassProperty,
   ClassDeclaration,
-  TypeAlias
+  TypeAlias,
+  ImportDeclaration
 } from "types";
 
 export const addProperties = (
@@ -234,6 +236,25 @@ export const addAction = (
   });
 
   let contents: Program = parse(fileContents).program;
+
+  const reduxActionsIndex: number = findImportIndex(contents, "redux-actions");
+
+  if (reduxActionsIndex !== -1) {
+    const reduxActionsImport: ImportDeclaration = ((contents.body[
+      reduxActionsIndex
+    ]: any): ImportDeclaration);
+    (reduxActionsImport: any).specifiers.push({
+      type: ASTTypes.ImportSpecifier,
+      imported: {
+        type: ASTTypes.Identifier,
+        name: "createAction"
+      },
+      local: {
+        type: ASTTypes.Identifier,
+        name: "createAction"
+      }
+    });
+  }
 
   let actionsExportIndex: number = findExportIndex(contents, "Actions");
 

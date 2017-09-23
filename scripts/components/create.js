@@ -40,7 +40,7 @@ export const createComponent = (
       state: ComponentState;
 
       render() {
-        return styled.div\`\`;
+        return styled.div\`display: block\`;
       }
     }
 

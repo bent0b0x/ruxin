@@ -16,7 +16,6 @@ module.exports = pwd => {
     }
 
     dir = path.resolve(dir, "../");
-    console.log("dir: ", dir);
   }
 
   throw new Error(

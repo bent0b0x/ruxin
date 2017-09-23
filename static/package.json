@@ -8,8 +8,9 @@
     "prep": "mkdir build/ && cp index.html build/",
     "clean": "rm -rf build/",
     "lint": "eslint app test",
+    "lint:css": "stylelint './app/**/*.js'",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
-    "quality": "yarn run lint && yarn run flow",
+    "quality": "yarn run lint && yarn run lint:css && yarn run flow",
     "precommit": "lint-staged"
   },
   "lint-staged": {
@@ -59,6 +60,10 @@
     "react-transform-hmr": "^1.0.4",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
+    "stylelint": "^8.1.1",
+    "stylelint-config-standard": "^17.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.0.0",
     "url-loader": "^0.5.9",
     "webpack": "^3.0.0",
     "webpack-dev-server": "^2.5.0"

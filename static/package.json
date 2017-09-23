@@ -1,7 +1,7 @@
 {
-  "name": "<name here>",
+  "name": "HelloRuxin",
   "version": "0.0.0",
-  "description": "<description here>",
+  "description": "World changing app",
   "scripts": {
     "dev":
       "yarn run clean && yarn run prep && webpack-dev-server -d --content-base ./build --hot --progress --colors",

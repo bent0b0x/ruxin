@@ -2,12 +2,13 @@
 var api = require("../../build/bundle");
 var program = require("commander");
 var prompt = require("prompt");
+var findRootRuxin = require("./util/findRootRuxin");
 
 prompt.message = "";
 
-const commmitState = (state, props) => {
+const commitState = (state, props, dir) => {
   const config = {
-    baseDir: process.cwd()
+    baseDir: dir
   };
   const firstDelimiterIndex = state.indexOf(".");
   if (firstDelimiterIndex === -1) {
@@ -19,7 +20,7 @@ const commmitState = (state, props) => {
   }
 };
 
-const getProps = (state, props = {}) => {
+const getProps = (state, props = {}, dir) => {
   prompt.get(
     {
       name: "key",
@@ -44,13 +45,13 @@ const getProps = (state, props = {}) => {
                   type: type,
                   default: result.default
                 };
-                getProps(state, props);
+                getProps(state, props, dir);
               }
             );
           }
         );
       } else {
-        commmitState(state, props);
+        commitState(state, props, dir);
       }
     }
   );
@@ -61,17 +62,18 @@ program
   .arguments("<state> [action]")
   .option("-p, --props", "initial state properties")
   .action(function(state, action, options) {
+    var dir = findRootRuxin(process.cwd());
     if (action) {
       api.action.add(state, action, {
-        baseDir: process.cwd()
+        baseDir: dir
       });
     } else {
       if (options.props) {
         prompt.start();
 
-        getProps(state);
+        getProps(state, {}, dir);
       } else {
-        commmitState(state, {});
+        commitState(state, {}, dir);
       }
     }
   });

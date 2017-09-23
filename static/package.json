@@ -1,10 +1,12 @@
 {
-  "name": "alexa-ui",
+  "name": "<name here>",
   "version": "0.0.0",
-  "description": "UI for alexa top sites analysis",
+  "description": "<description here>",
   "scripts": {
-    "dev": "yarn run clean && yarn run prep && webpack-dev-server -d --content-base ./build --hot --progress --colors",
-    "build": "yarn run clean && yarn run prep && NODE_ENV=production webpack --progress --colors",
+    "dev":
+      "yarn run clean && yarn run prep && webpack-dev-server -d --content-base ./build --hot --progress --colors",
+    "build":
+      "yarn run clean && yarn run prep && NODE_ENV=production webpack --progress --colors",
     "prep": "mkdir build/ && cp index.html build/",
     "clean": "rm -rf build/",
     "lint": "eslint app test",
@@ -14,10 +16,7 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.js": ["prettier --write", "git add"]
   },
   "main": "index.js",
   "license": "MIT",

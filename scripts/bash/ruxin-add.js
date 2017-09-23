@@ -1,10 +1,8 @@
 #!/usr/bin/env node --harmony
 var api = require("../../build/bundle");
 var program = require("commander");
-var prompt = require("prompt");
 var findRootRuxin = require("./util/findRootRuxin");
-
-prompt.message = "";
+var getProps = require("./util/getProps");
 
 const commitState = (state, props, dir) => {
   const config = {
@@ -20,43 +18,6 @@ const commitState = (state, props, dir) => {
   }
 };
 
-const getProps = (state, props = {}, dir) => {
-  prompt.get(
-    {
-      name: "key",
-      required: false,
-      message: "key (leave blank to finish)"
-    },
-    function(err, { key }) {
-      if (key) {
-        prompt.get(
-          {
-            name: "type",
-            required: true
-          },
-          function(err, { type }) {
-            prompt.get(
-              {
-                name: "default",
-                required: true
-              },
-              function(err, result) {
-                props[key] = {
-                  type: type,
-                  default: result.default
-                };
-                getProps(state, props, dir);
-              }
-            );
-          }
-        );
-      } else {
-        commitState(state, props, dir);
-      }
-    }
-  );
-};
-
 program
   .version("0.0.0")
   .arguments("<state> [action]")
@@ -69,9 +30,7 @@ program
       });
     } else {
       if (options.props) {
-        prompt.start();
-
-        getProps(state, {}, dir);
+        getProps(state, {}, dir, commitState);
       } else {
         commitState(state, {}, dir);
       }

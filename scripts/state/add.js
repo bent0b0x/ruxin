@@ -3,18 +3,25 @@ import fs from "fs";
 import {
   createDirIfNeeded,
   getCompleteStateDir,
-  getStateFileName
+  getStateFileName,
+  getTypesFileName,
+  createFileIfNeeded
 } from "util/dir";
 import {
   findExportIndex,
   findVariableDeclarationIndex,
+  findClassDeclarationIndex,
   addExpressionToProgram,
-  addShorthandExport
+  addShorthandExport,
+  findTypeExportIndex
 } from "util/program";
 import toAST from "util/toAST";
 import parse from "../parser";
 import write from "../write";
 import camelCase from "camelcase";
+import forEach from "lodash.foreach";
+import { ASTTypes } from "constants/ApplicationConstants";
+import { createSelectorsForState } from "./create";
 
 import type {
   Project,
@@ -22,8 +29,108 @@ import type {
   ExportNamedDeclaration,
   VariableDeclaration,
   VariableDeclarator,
-  ObjectProperty
+  ObjectProperty,
+  ObjectTypeProperty,
+  StateProperties,
+  StateProperty,
+  ClassProperty,
+  ClassDeclaration,
+  TypeAlias
 } from "types";
+
+export const addProperties = (
+  state: string,
+  properties: StateProperties,
+  config: Project,
+  parentState?: string
+): void => {
+  const stateFile: string = parentState || state;
+  const stateFileName: string = getStateFileName(config, stateFile);
+
+  const fileContents: string = fs.readFileSync(stateFileName, {
+    encoding: "utf8"
+  });
+
+  let program: Program = parse(fileContents).program;
+
+  const classIndex: number = findClassDeclarationIndex(program, state);
+
+  const typesFileName: string = getTypesFileName(config);
+  createFileIfNeeded(getTypesFileName(config));
+
+  const typeFileContents: string = fs.readFileSync(typesFileName, {
+    encoding: "utf8"
+  });
+
+  let typesProgram: Program = parse(typeFileContents).program;
+
+  const existingTypeExportIndex: number = findTypeExportIndex(
+    typesProgram,
+    state
+  );
+
+  if (classIndex === -1) {
+    throw new Error(`Cannot find existing declaration for ${state}!`);
+  }
+
+  const classDec: ClassDeclaration = ((program.body[
+    classIndex
+  ]: any): ClassDeclaration);
+
+  forEach(properties, (property: StateProperty, key: string) => {
+    const existingProp: ?ClassProperty = classDec.body.body.find(
+      (existingProperty: ClassProperty) => existingProperty.key.name === key
+    );
+
+    if (existingProp) {
+      throw new Error(
+        `Property "${key}" already exists! Please delete it before modifying.`
+      );
+    }
+
+    classDec.body.body.push(
+      toAST(`class A {\n${key}: ${property.type};}`).body.body[0]
+    );
+    (classDec: any).superClass.arguments[0].properties.push({
+      type: ASTTypes.ObjectProperty,
+      key: {
+        type: ASTTypes.Identifier,
+        name: key
+      },
+      value: toAST(property.default),
+      kind: "init"
+    });
+
+    if (existingTypeExportIndex !== -1) {
+      const typeExport: ExportNamedDeclaration = ((typesProgram.body[
+        existingTypeExportIndex
+      ]: any): ExportNamedDeclaration);
+
+      const existingTypeDef: ?ObjectTypeProperty = ((typeExport.declaration: any): TypeAlias).right.properties.find(
+        (def: ObjectTypeProperty) => def.key.name === key
+      );
+
+      if (!existingTypeDef) {
+        ((typeExport.declaration: any): TypeAlias).right.properties.push(
+          toAST(`export type foo= { ${key}: ${property.type} };`, true)
+            .declaration.right.properties[0]
+        );
+      }
+    }
+  });
+
+  if (!parentState) {
+    program = createSelectorsForState(state, properties, program);
+  }
+
+  const newProgramContents: string = write(program);
+
+  fs.writeFileSync(stateFileName, newProgramContents);
+
+  const newTypeContents: string = write(typesProgram);
+
+  fs.writeFileSync(typesFileName, newTypeContents);
+};
 
 const getActionConstantName = (action: string): string => action.toUpperCase();
 

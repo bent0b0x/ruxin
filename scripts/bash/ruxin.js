@@ -5,4 +5,5 @@ program
   .version("0.0.0")
   .command("create <name>", "initialize project")
   .command("add <state> [action]", "add to project")
+  .command("add-props <state>", "add prop(s) to a state piece")
   .parse(process.argv);

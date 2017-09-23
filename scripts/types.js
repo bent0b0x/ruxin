@@ -3,7 +3,7 @@ import { ASTTypes } from "constants/ApplicationConstants";
 
 export type Foo = {};
 
-export type ClassProperty = {
+export type StateProperty = {
   type: string,
   default: any
 };
@@ -14,7 +14,7 @@ export type Project = {|
 |};
 
 export type StateProperties = {
-  [key: string]: ClassProperty
+  [key: string]: StateProperty
 };
 
 export type RequiredImport = {
@@ -116,12 +116,18 @@ export type VariableDeclaration = ASTItem & {
 
 export type ExportNamedDeclaration = ASTItem & {
   type: ASTTypes.ExportNamedDeclaration,
-  declaration: VariableDeclaration
+  declaration: VariableDeclaration | TypeAlias
 };
 
 export type ExportDefaultDeclaration = ASTItem & {
   type: ASTTypes.ExportDefaultDeclaration,
   declaration: ASTItem
+};
+
+export type ClassProperty = ASTItem & {
+  type: ASTTypes.ClassProperty,
+  key: Identifier,
+  value: ASTItem
 };
 
 export type ClassBody = ASTItem & {

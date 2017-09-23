@@ -1,11 +1,12 @@
 /* @flow */
 import create from "./state/create";
-import { addAction } from "./state/add";
+import { addAction, addProperties } from "./state/add";
 import init from "./init";
 
 export default {
   state: {
-    create
+    create,
+    addProperties
   },
   action: {
     add: addAction

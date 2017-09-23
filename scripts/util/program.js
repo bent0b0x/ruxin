@@ -8,6 +8,7 @@ import type {
   ExportNamedDeclaration,
   ExportDefaultDeclaration,
   VariableDeclaration,
+  ClassDeclaration,
   ObjectProperty,
   VariableDeclarator,
   ObjectExpression,
@@ -61,6 +62,16 @@ export const findVariableDeclarationIndex = (
     (item: ASTItem | VariableDeclaration) =>
       item.type === ASTTypes.VariableDeclaration &&
       ((item: any): VariableDeclaration).declarations[0].id.name === decName
+  );
+
+export const findClassDeclarationIndex = (
+  stateFile: Program,
+  decName: string
+): number =>
+  stateFile.body.findIndex(
+    (item: ASTItem | ClassDeclaration) =>
+      item.type === ASTTypes.ClassDeclaration &&
+      ((item: any): ClassDeclaration).id.name === decName
   );
 
 export const addExpressionToProgram = (

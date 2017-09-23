@@ -1,6 +1,6 @@
 /* @flow */
 import { ASTTypes } from "constants/ApplicationConstants";
-import type { StateProperties, ClassProperty, ClassDeclaration } from "types";
+import type { StateProperties, StateProperty, ClassDeclaration } from "types";
 import map from "lodash.map";
 import toAST from "util/toAST";
 
@@ -20,7 +20,7 @@ export default (name: string, props: StateProperties): ClassDeclaration => ({
       const result = toAST(
         `class A {\n${map(
           props,
-          (prop: ClassProperty, name: string) => `${name}: ${prop.type}`
+          (prop: StateProperty, name: string) => `${name}: ${prop.type}`
         ).join(";\n")}}`
       ).body.body;
       return result;
@@ -39,7 +39,7 @@ export default (name: string, props: StateProperties): ClassDeclaration => ({
     arguments: [
       {
         type: ASTTypes.ObjectExpression,
-        properties: map(props, (prop: ClassProperty, name: string) => ({
+        properties: map(props, (prop: StateProperty, name: string) => ({
           type: ASTTypes.ObjectProperty,
           key: {
             type: ASTTypes.Identifier,

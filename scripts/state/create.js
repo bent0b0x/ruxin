@@ -123,7 +123,7 @@ const addReducerAndExport = (
   return newStateFile;
 };
 
-const createSelectorsForState = (
+export const createSelectorsForState = (
   state: string,
   props: StateProperties,
   program: Program

@@ -21,6 +21,11 @@ export const getStateFileName = (config: Project, state: string): string =>
 export const getReducerFileName = (config: Project): string =>
   `${getCompleteStateDir(config)}/index.js`;
 
+export const getComponentsPath = (): string => `${getScriptsPath()}/components`;
+
+export const getCompleteComponentsDir = (config: Project): string =>
+  `${config.baseDir}${getComponentsPath()}`;
+
 export const getTypesFileName = (config: Project): string =>
   `${config.baseDir}${getScriptsPath()}/types.js`;
 

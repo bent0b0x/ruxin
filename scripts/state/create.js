@@ -1,6 +1,6 @@
 /* @flow */
 import fs from "fs";
-import { ASTTypes } from "constants/ApplicationConstants";
+import { ASTTypes, ImmutableStructures } from "constants/ApplicationConstants";
 import { RequiredIndexImports } from "constants/StateConstants";
 import addRequiredImports from "util/addRequiredImports";
 import createRecordSubclass from "util/createRecordSubclass";
@@ -21,7 +21,8 @@ import {
   addShorthandExport,
   addShorthandProperty,
   findImportIndex,
-  findClassDeclarationIndex
+  findClassDeclarationIndex,
+  addImmutableImport
 } from "util/program";
 import toAST from "util/toAST";
 import parse from "../parser";
@@ -31,6 +32,7 @@ import type {
   File,
   Project,
   StateProperties,
+  StateProperty,
   ASTItem,
   Program,
   VariableDeclaration,
@@ -97,6 +99,10 @@ const addState = (
         state,
         properties
       );
+
+      forEach(properties, (prop: StateProperty) => {
+        addImmutableImport(newProgram, prop.type);
+      });
 
       if (parentState) {
         const parentExportIndex: number = findClassDeclarationIndex(

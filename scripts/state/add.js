@@ -9,12 +9,13 @@ import {
 } from "util/dir";
 import {
   findExportIndex,
-  findImportIndex,
   findVariableDeclarationIndex,
   findClassDeclarationIndex,
   addExpressionToProgram,
   addShorthandExport,
-  findTypeExportIndex
+  findTypeExportIndex,
+  addImmutableImport,
+  addImportToModule
 } from "util/program";
 import toAST from "util/toAST";
 import parse from "../parser";
@@ -36,8 +37,7 @@ import type {
   StateProperty,
   ClassProperty,
   ClassDeclaration,
-  TypeAlias,
-  ImportDeclaration
+  TypeAlias
 } from "types";
 
 export const addProperties = (
@@ -102,6 +102,7 @@ export const addProperties = (
       value: toAST(property.default),
       kind: "init"
     });
+    addImmutableImport(program, property.type);
 
     if (existingTypeExportIndex !== -1) {
       const typeExport: ExportNamedDeclaration = ((typesProgram.body[
@@ -237,24 +238,7 @@ export const addAction = (
 
   let contents: Program = parse(fileContents).program;
 
-  const reduxActionsIndex: number = findImportIndex(contents, "redux-actions");
-
-  if (reduxActionsIndex !== -1) {
-    const reduxActionsImport: ImportDeclaration = ((contents.body[
-      reduxActionsIndex
-    ]: any): ImportDeclaration);
-    (reduxActionsImport: any).specifiers.push({
-      type: ASTTypes.ImportSpecifier,
-      imported: {
-        type: ASTTypes.Identifier,
-        name: "createAction"
-      },
-      local: {
-        type: ASTTypes.Identifier,
-        name: "createAction"
-      }
-    });
-  }
+  addImportToModule(contents, "createAction", "redux-actions");
 
   let actionsExportIndex: number = findExportIndex(contents, "Actions");
 

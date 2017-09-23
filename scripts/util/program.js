@@ -1,5 +1,5 @@
 /* @flow */
-import { ASTTypes } from "constants/ApplicationConstants";
+import { ASTTypes, ImmutableStructures } from "constants/ApplicationConstants";
 import toAST from "util/toAST";
 
 import type {
@@ -12,7 +12,8 @@ import type {
   ObjectProperty,
   VariableDeclarator,
   ObjectExpression,
-  ImportDeclaration
+  ImportDeclaration,
+  ImportSpecifier
 } from "types";
 
 export const findImportIndex = (
@@ -132,4 +133,51 @@ export const addShorthandProperty = (
       shorthand: true
     });
   }
+};
+
+export const addImportToModule = (
+  program: Program,
+  importName: string,
+  module: string
+): void => {
+  const moduleIndex: number = findImportIndex(program, module);
+
+  if (moduleIndex !== -1) {
+    const importDec: ImportDeclaration = ((program.body[
+      moduleIndex
+    ]: any): ImportDeclaration);
+    if (
+      (importDec: any).specifiers.find(
+        (specifier: ImportSpecifier) => specifier.imported.name === importName
+      )
+    ) {
+      return;
+    }
+    (importDec: any).specifiers.push({
+      type: ASTTypes.ImportSpecifier,
+      imported: {
+        type: ASTTypes.Identifier,
+        name: importName
+      },
+      local: {
+        type: ASTTypes.Identifier,
+        name: importName
+      }
+    });
+  }
+};
+
+export const addImmutableImport = (program: Program, type: string): void => {
+  const firstDelim: number = type.indexOf("<");
+  if (firstDelim === -1) {
+    return;
+  }
+
+  const structure: string = type.slice(0, firstDelim);
+
+  if (!ImmutableStructures[structure]) {
+    return;
+  }
+
+  addImportToModule(program, structure, "immutable");
 };

@@ -35,3 +35,15 @@ export const ASTTypes: Object = {
   CommentLine: "CommentLine",
   File: "File"
 };
+
+export const ImmutableStructures: Object = {
+  ValueObject: "Immutable.ValueObject",
+  List: "Immutable.List",
+  Map: "Immutable.Map",
+  OrderedMap: "Immutable.OrderedMap",
+  Set: "Immutable.Set",
+  OrderedSet: "Immutable.OrderedSet",
+  Stack: "Immutable.Stack",
+  Seq: "Immutable.Seq",
+  Collection: "Immutable.Collection"
+};

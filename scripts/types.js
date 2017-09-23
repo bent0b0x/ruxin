@@ -54,8 +54,6 @@ export type BooleanLiteral = ASTItem & {
   value: boolean
 };
 
-type Literal = StringLiteral | NumericLiteral | BooleanLiteral;
-
 export type Identifier = ASTItem & {
   type: ASTTypes.Identifier,
   name: string
@@ -82,12 +80,23 @@ export type ImportDeclaration = ASTItem & {
 export type ObjectProperty = ASTItem & {
   type: ASTTypes.ObjectProperty,
   key: Identifier,
-  value: Literal
+  value: ASTItem
 };
 
 export type ObjectExpression = ASTItem & {
   type: ASTTypes.ObjectExpression,
   properties: Array<ObjectProperty>
+};
+
+export type ObjectTypeProperty = ASTItem & {
+  type: ASTTypes.ObjectTypeProperty,
+  key: Identifier,
+  value: ASTItem
+};
+
+export type ObjectTypeAnnotation = ASTItem & {
+  type: ASTTypes.ObjectTypeAnnotation,
+  properties: Array<ObjectTypeProperty>
 };
 
 export type VariableDeclarator = ASTItem & {
@@ -101,7 +110,8 @@ type VariableDeclarationKind = "let" | "const" | "var";
 export type VariableDeclaration = ASTItem & {
   type: ASTTypes.VariableDeclaration,
   declarations: Array<VariableDeclarator>,
-  kind: VariableDeclarationKind
+  kind: VariableDeclarationKind,
+  right?: ObjectTypeAnnotation
 };
 
 export type ExportNamedDeclaration = ASTItem & {

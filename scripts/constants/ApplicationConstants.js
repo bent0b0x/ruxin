@@ -18,6 +18,8 @@ export const ASTTypes: Object = {
   ObjectExpression: "ObjectExpression",
   ObjectProperty: "ObjectProperty",
   ObjectMethod: "ObjectMethod",
+  ObjectTypeAnnotation: "ObjectTypeAnnotation",
+  ObjectTypeProperty: "ObjectTypeProperty",
   ExportDefaultDeclaration: "ExportDefaultDeclaration",
   CallExpression: "CallExpression",
   ClassDeclaration: "ClassDeclaration",

@@ -9,7 +9,7 @@ import {
 import addRequiredImports from "util/addRequiredImports";
 import addRequiredExports from "util/addRequiredExports";
 import createRecordSubclass from "util/createRecordSubclass";
-import { addType } from "types/add";
+import { addType, updateRootStateType } from "types/add";
 import {
   createDirIfNeeded,
   getCompleteStateDir,
@@ -67,7 +67,8 @@ const addState = (
   state: string,
   properties: StateProperties,
   stateFile: Program,
-  config: Project
+  config: Project,
+  parentState?: string
 ): Program => {
   let newProgram: Program = Object.assign({}, stateFile);
 
@@ -96,7 +97,7 @@ const addState = (
 
   addShorthandExport(mainStateExport, state);
 
-  addType(state, properties, config);
+  addType(state, properties, config, !parentState);
 
   return newProgram;
 };
@@ -238,7 +239,7 @@ export default (
 
   stateFile = addRequiredExports(RequiredExports, state, stateFile);
 
-  stateFile = addState(state, properties, stateFile, config);
+  stateFile = addState(state, properties, stateFile, config, parentState);
 
   stateFile = addReducerAndExport(stateFile, baseState);
 

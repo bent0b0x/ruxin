@@ -7,8 +7,7 @@ import type {
   ASTItem,
   Program,
   RequiredExport,
-  VariableDeclarator,
-  ExportNamedDeclaration
+  VariableDeclarator
 } from "types";
 
 export default (
@@ -29,7 +28,7 @@ export default (
     const exportExists: boolean = !!newStateFile.body.find(
       (item: ASTItem) =>
         item.type === ASTTypes.ExportNamedDeclaration &&
-        !!((item: any): ExportNamedDeclaration).declaration.declarations.find(
+        !!(item: any).declaration.declarations.find(
           (declaration: VariableDeclarator) =>
             declaration.id.name === requiredExport.name
         )

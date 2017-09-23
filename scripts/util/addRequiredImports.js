@@ -29,8 +29,7 @@ export default (
         requiredImport.module,
         requiredImport.imports,
         requiredImport.default,
-        requiredImport.type,
-        undefined
+        requiredImport.type
       );
       lengthIncrease += newImport.end - newImport.start;
       imports.push(newImport);

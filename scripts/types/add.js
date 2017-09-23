@@ -16,8 +16,7 @@ import type {
   ClassProperty,
   ObjectTypeProperty,
   ObjectTypeAnnotation,
-  VariableDeclaration,
-  TypeAlias
+  VariableDeclaration
 } from "types";
 
 export const addType = (
@@ -71,8 +70,8 @@ const updateRootStateType = (state: string, program: Program): Program => {
   ]: any): ExportNamedDeclaration);
 
   const existingStateType: ?ObjectTypeProperty =
-    ((typeExport.declaration: any): TypeAlias).right &&
-    ((typeExport.declaration: any): TypeAlias).right.properties.find(
+    (typeExport.declaration: any).right &&
+    (typeExport.declaration: any).right.properties.find(
       (property: ObjectTypeProperty) => property.key.name === state
     );
 

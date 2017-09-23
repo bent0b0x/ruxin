@@ -4,17 +4,14 @@ import type {
   ImportDeclaration,
   ImportSpecifier,
   Identifier,
-  StringLiteral,
-  CommentBlock,
-  CommentLine
+  StringLiteral
 } from "types";
 
 export default (
   module: string,
   imports: Array<string>,
   defaultImport?: boolean,
-  type?: boolean,
-  leadingComments?: Array<CommentBlock | CommentLine> = []
+  type?: boolean
 ): ImportDeclaration => {
   let startLocation: number = 0;
   const importSpecifiers: Array<

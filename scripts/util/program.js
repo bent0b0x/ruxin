@@ -32,8 +32,7 @@ export const findExportIndex = (
   stateFile.body.findIndex(
     (item: ASTItem | ExportNamedDeclaration) =>
       item.type === ASTTypes.ExportNamedDeclaration &&
-      ((item: any): ExportNamedDeclaration).declaration.declarations[0].id
-        .name === exportName
+      (item: any).declaration.declarations[0].id.name === exportName
   );
 
 export const findTypeExportIndex = (

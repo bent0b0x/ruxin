@@ -6,7 +6,7 @@ import type { Program } from "types";
 
 const flowPragma = "/* @flow */";
 
-const addFlowPragma = (code: string): string => {
+export const removeFlowPragma = (code: string): string => {
   let formattedCode: string = code;
   const flowStart: number = formattedCode.indexOf(flowPragma);
   const startsWithFlow = flowStart !== -1 && flowStart <= flowPragma.length;
@@ -15,9 +15,11 @@ const addFlowPragma = (code: string): string => {
     formattedCode = formattedCode.slice(flowStart + flowPragma.length).trim();
   }
 
-  console.log(formattedCode);
+  return formattedCode;
+};
 
-  return `${flowPragma}\n${formattedCode}`;
+const addFlowPragma = (code: string): string => {
+  return `${flowPragma}\n${removeFlowPragma(code)}`;
 };
 
 export default (program: Program): string =>

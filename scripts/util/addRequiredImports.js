@@ -15,14 +15,7 @@ export default (
 ): Program => {
   const imports: Array<ImportDeclaration> = [];
   let lengthIncrease: number = 0;
-  const includeFlowPragma: boolean = !!(
-    stateFile.body &&
-    stateFile.body[0] &&
-    stateFile.body[0].leadingComments &&
-    stateFile.body[0].leadingComments.length &&
-    stateFile.body[0].leadingComments[0].value.trim() === "@flow"
-  );
-  requiredImports.forEach((requiredImport: RequiredImport, index: number) => {
+  requiredImports.forEach((requiredImport: RequiredImport) => {
     if (
       !stateFile.body.find((item: ASTItem): boolean => {
         if (item.type === ASTTypes.ImportDeclaration) {
@@ -37,13 +30,8 @@ export default (
         requiredImport.imports,
         requiredImport.default,
         requiredImport.type,
-        includeFlowPragma && index === 0
-          ? stateFile.body[0].leadingComments
-          : undefined
+        undefined
       );
-      if (includeFlowPragma && index === 0) {
-        delete stateFile.body[0].leadingComments;
-      }
       lengthIncrease += newImport.end - newImport.start;
       imports.push(newImport);
     }

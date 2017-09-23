@@ -24,11 +24,8 @@ export const getReducerFileName = (config: Project): string =>
 export const getTypesFileName = (config: Project): string =>
   `${config.baseDir}${getScriptsPath()}/types.js`;
 
-export const initFileContents = (fileName: string): string =>
-  fileName.slice(-3) === ".js" ? "/* @flow */ \n" : "";
-
 export const createFileIfNeeded = (fileName: string): void => {
   if (!fs.existsSync(fileName)) {
-    fs.writeFileSync(fileName, prettier.format(initFileContents(fileName)));
+    fs.writeFileSync(fileName, prettier.format(""));
   }
 };

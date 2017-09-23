@@ -60,7 +60,6 @@ export default (
     end: finalEndLocation,
     specifiers: importSpecifiers,
     importKind: type ? "type" : "value",
-    source,
-    leadingComments
+    source
   };
 };

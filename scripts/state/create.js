@@ -1,13 +1,8 @@
 /* @flow */
 import fs from "fs";
 import { ASTTypes } from "constants/ApplicationConstants";
-import {
-  RequiredImports,
-  RequiredExports,
-  RequiredIndexImports
-} from "constants/StateConstants";
+import { RequiredIndexImports } from "constants/StateConstants";
 import addRequiredImports from "util/addRequiredImports";
-import addRequiredExports from "util/addRequiredExports";
 import createRecordSubclass from "util/createRecordSubclass";
 import { addType } from "types/add";
 import write from "../write";
@@ -32,6 +27,7 @@ import parse from "../parser";
 import forEach from "lodash.foreach";
 
 import type {
+  File,
   Project,
   StateProperties,
   ASTItem,
@@ -42,24 +38,39 @@ import type {
   ClassProperty
 } from "types";
 
-const getOrCreateStateFile = (state: string, config: Project): Program => {
+const getOrCreateStateFile = (state: string, config: Project): File => {
   const completeStateDir: string = getCompleteStateDir(config);
   createDirIfNeeded(completeStateDir);
 
   const stateFileName = getStateFileName(config, state);
 
-  createFileIfNeeded(stateFileName);
+  createFileIfNeeded(
+    stateFileName,
+    write(
+      parse(`
+import { Record } from 'immutable';
+import { handleActions } from 'redux-actions';
+
+import type { Action } from 'scripts/types';
+
+export const ActionConstants = {};
+
+export const Actions = {};
+
+export const State = {};
+
+export const Selectors = {};
+`)
+    )
+  );
 
   const fileContents: string = fs.readFileSync(stateFileName, {
     encoding: "utf8"
   });
 
-  const contents: Program = parse(fileContents).program;
+  const contents: File = parse(fileContents);
 
-  const newContents: Program = addRequiredImports(RequiredImports, contents);
-
-  const newStateFile: string = write(newContents);
-  return parse(newStateFile).program;
+  return contents;
 };
 
 const addState = (
@@ -105,22 +116,22 @@ const addReducerAndExport = (
   stateFile: Program,
   parentState: string
 ): Program => {
-  const newStateFile: Program = Object.assign({}, stateFile);
+  const newStateProgram: Program = Object.assign({}, stateFile);
 
   if (findVariableDeclarationIndex(stateFile, "reducer") === -1) {
     const reducer: VariableDeclaration = toAST(`const reducer = {}`, true);
-    newStateFile.body.push(reducer);
+    newStateProgram.body.push(reducer);
   }
 
   if (findDefaultExportIndex(stateFile) === -1) {
     const defaultExport: ExportNamedDeclaration = toAST(
-      `export default handleActions(reducer, new ${parentState}());`,
+      `\nexport default handleActions(reducer, new ${parentState}());`,
       true
     );
-    newStateFile.body.push(defaultExport);
+    newStateProgram.body.push(defaultExport);
   }
 
-  return newStateFile;
+  return newStateProgram;
 };
 
 export const createSelectorsForState = (
@@ -234,16 +245,15 @@ export default (
   parentState?: string
 ): void => {
   const baseState: string = parentState || state;
-  let stateFile: Program = getOrCreateStateFile(baseState, config);
+  const stateFile: File = getOrCreateStateFile(baseState, config);
+  let stateProgram: Program = stateFile.program;
 
-  stateFile = addRequiredExports(RequiredExports, state, stateFile);
+  stateProgram = addState(state, properties, stateProgram, config, parentState);
 
-  stateFile = addState(state, properties, stateFile, config, parentState);
-
-  stateFile = addReducerAndExport(stateFile, baseState);
+  stateProgram = addReducerAndExport(stateProgram, baseState);
 
   if (state === baseState) {
-    stateFile = createSelectorsForState(state, properties, stateFile);
+    stateProgram = createSelectorsForState(state, properties, stateProgram);
     let reducer: Program = getOrCreateReducerFile(config);
 
     reducer = addStateToReducer(state, reducer, parentState);
@@ -252,6 +262,8 @@ export default (
 
     fs.writeFileSync(getReducerFileName(config), newReducerFile);
   }
+
+  stateFile.program = stateProgram;
 
   const newStateString: string = write(stateFile);
 

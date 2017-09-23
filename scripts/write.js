@@ -2,7 +2,7 @@
 import generate from "babel-generator";
 import prettier from "prettier";
 
-import type { Program } from "types";
+import type { Program, File } from "types";
 
 const flowPragma = "/* @flow */";
 
@@ -22,5 +22,7 @@ const addFlowPragma = (code: string): string => {
   return `${flowPragma}\n${removeFlowPragma(code)}`;
 };
 
-export default (program: Program): string =>
-  prettier.format(addFlowPragma(generate(program).code));
+export default (content: Program | File): string =>
+  prettier.format(addFlowPragma(generate(content).code), {
+    parser: "babylon"
+  });

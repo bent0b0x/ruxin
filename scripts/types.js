@@ -33,6 +33,16 @@ export type ASTType = $Keys<typeof ASTTypes>;
 
 export type ASTItem = {
   type: ASTType,
+  loc: {
+    start: {
+      line: number,
+      column: number
+    },
+    end: {
+      line: number,
+      column: number
+    }
+  },
   start: number,
   end: number,
   leadingComments?: Array<CommentBlock | CommentLine>
@@ -159,6 +169,11 @@ export type Program = ASTItem & {
   type: ASTTypes.Program,
   body: Array<ASTItem>,
   sourceType: "module"
+};
+
+export type File = ASTItem & {
+  type: ASTTypes.File,
+  program: Program
 };
 
 export type TypeAlias = ASTItem & {

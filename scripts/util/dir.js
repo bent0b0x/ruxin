@@ -34,8 +34,11 @@ export const getCompleteContainersDir = (config: Project): string =>
 export const getTypesFileName = (config: Project): string =>
   `${config.baseDir}${getScriptsPath()}/types.js`;
 
-export const createFileIfNeeded = (fileName: string): void => {
+export const createFileIfNeeded = (
+  fileName: string,
+  initContents = ""
+): void => {
   if (!fs.existsSync(fileName)) {
-    fs.writeFileSync(fileName, prettier.format(""));
+    fs.writeFileSync(fileName, initContents);
   }
 };

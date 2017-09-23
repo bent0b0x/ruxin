@@ -32,5 +32,6 @@ export const ASTTypes: Object = {
   ClassBody: "ClassBody",
   UnaryExpression: "UnaryExpression",
   CommentBlock: "CommentBlock",
-  CommentLine: "CommentLine"
+  CommentLine: "CommentLine",
+  File: "File"
 };

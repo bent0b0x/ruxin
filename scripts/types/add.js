@@ -5,9 +5,8 @@ import { findTypeExportIndex } from "util/program";
 import { ASTTypes } from "constants/ApplicationConstants";
 import toAST from "util/toAST";
 import parse from "../parser";
+import write from "../write";
 import reduce from "lodash.reduce";
-import generate from "babel-generator";
-import prettier from "prettier";
 
 import type {
   Project,
@@ -57,7 +56,7 @@ export const addType = (
     contents.body.push(typeExport);
   }
 
-  fs.writeFileSync(typesFileName, prettier.format(generate(contents).code));
+  fs.writeFileSync(typesFileName, write(contents));
 };
 
 const updateRootStateType = (state: string, program: Program): Program => {
@@ -66,8 +65,6 @@ const updateRootStateType = (state: string, program: Program): Program => {
   if (reducerExportIndex === -1) {
     throw new Error("RootState type is missing");
   }
-
-  console.log(JSON.stringify(program.body[reducerExportIndex]));
 
   const typeExport: ExportNamedDeclaration = ((program.body[
     reducerExportIndex
@@ -82,7 +79,6 @@ const updateRootStateType = (state: string, program: Program): Program => {
   if (!existingStateType) {
     const right: ?ObjectTypeAnnotation = ((typeExport.declaration: any): VariableDeclaration)
       .right;
-    console.log("right: ", right);
 
     if (right) {
       (right: any).properties.push({

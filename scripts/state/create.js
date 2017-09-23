@@ -9,7 +9,8 @@ import {
 import addRequiredImports from "util/addRequiredImports";
 import addRequiredExports from "util/addRequiredExports";
 import createRecordSubclass from "util/createRecordSubclass";
-import { addType, updateRootStateType } from "types/add";
+import { addType } from "types/add";
+import write from "../write";
 import {
   createDirIfNeeded,
   getCompleteStateDir,
@@ -27,8 +28,6 @@ import {
   findImportIndex
 } from "util/program";
 import toAST from "util/toAST";
-import generate from "babel-generator";
-import prettier from "prettier";
 import parse from "../parser";
 import forEach from "lodash.foreach";
 
@@ -59,7 +58,7 @@ const getOrCreateStateFile = (state: string, config: Project): Program => {
 
   const newContents: Program = addRequiredImports(RequiredImports, contents);
 
-  const newStateFile: string = prettier.format(generate(newContents).code);
+  const newStateFile: string = write(newContents);
   return parse(newStateFile).program;
 };
 
@@ -249,12 +248,12 @@ export default (
 
     reducer = addStateToReducer(state, reducer, parentState);
 
-    const newReducerFile: string = prettier.format(generate(reducer).code);
+    const newReducerFile: string = write(reducer);
 
     fs.writeFileSync(getReducerFileName(config), newReducerFile);
   }
 
-  const newStateString: string = prettier.format(generate(stateFile).code);
+  const newStateString: string = write(stateFile);
 
   fs.writeFileSync(getStateFileName(config, baseState), newStateString);
 };

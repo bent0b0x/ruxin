@@ -13,9 +13,8 @@ import {
 } from "util/program";
 import toAST from "util/toAST";
 import parse from "../parser";
+import write from "../write";
 import camelCase from "camelcase";
-import generate from "babel-generator";
-import prettier from "prettier";
 
 import type {
   Project,
@@ -164,7 +163,7 @@ export const addAction = (
 
   contents = stubReducer(state, action, contents);
 
-  const newStateString: string = prettier.format(generate(contents).code);
+  const newStateString: string = write(contents);
 
   fs.writeFileSync(getStateFileName(config, state), newStateString);
 };

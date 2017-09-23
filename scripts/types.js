@@ -154,3 +154,8 @@ export type Program = ASTItem & {
   body: Array<ASTItem>,
   sourceType: "module"
 };
+
+export type TypeAlias = ASTItem & {
+  type: ASTTypes.TypeAlias,
+  right: ObjectTypeAnnotation
+};

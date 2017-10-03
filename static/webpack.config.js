@@ -5,7 +5,6 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var appDir = path.resolve(__dirname, "app");
 var scriptsDir = appDir + "/scripts";
 var assetsDir = appDir + "/assets";
-var stylesDir = appDir + "/styles";
 var buildDir = path.resolve(__dirname, "build");
 var testDir = path.resolve(__dirname, "test");
 
@@ -20,7 +19,6 @@ var config = {
   resolve: {
     alias: {
       scripts: scriptsDir,
-      styles: stylesDir,
       assets: assetsDir,
       components: scriptsDir + "/components",
       constants: scriptsDir + "/constants",
@@ -38,43 +36,6 @@ var config = {
         test: /\.jsx?/,
         include: [appDir, testDir],
         loader: "babel-loader"
-      },
-      {
-        test: /\.scss$/,
-        include: stylesDir,
-        exclude: /index.scss$/,
-        use: [
-          {
-            loader: "style-loader"
-          },
-          {
-            loader: "css-loader",
-            options: {
-              modules: true
-            }
-          },
-          {
-            loader: "sass-loader",
-            options: {
-              includPaths: stylesDir
-            }
-          }
-        ]
-      },
-      {
-        test: /index.scss$/,
-        include: stylesDir,
-        use: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          use: [
-            {
-              loader: "css-loader"
-            },
-            {
-              loader: "sass-loader"
-            }
-          ]
-        })
       },
       {
         test: /\.(png|jpg|gif)$/,

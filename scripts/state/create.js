@@ -1,10 +1,10 @@
 /* @flow */
 import fs from "fs";
-import { ASTTypes, ImmutableStructures } from "constants/ApplicationConstants";
+import { ASTTypes } from "constants/ApplicationConstants";
 import { RequiredIndexImports } from "constants/StateConstants";
 import addRequiredImports from "util/addRequiredImports";
 import createRecordSubclass from "util/createRecordSubclass";
-import { addType } from "types/add";
+import { addStateToRootType } from "types/add";
 import write from "../write";
 import {
   createDirIfNeeded,
@@ -117,13 +117,19 @@ const addState = (
     }
   }
 
-  const mainStateExport: ExportNamedDeclaration = ((newProgram.body[
-    stateIndex + (subClassExists ? 0 : 1)
-  ]: any): ExportNamedDeclaration);
+  const newStateIndex: number = findExportIndex(newProgram, "State");
 
-  addShorthandExport(mainStateExport, state);
+  if (newStateIndex !== -1) {
+    const mainStateExport: ExportNamedDeclaration = ((newProgram.body[
+      newStateIndex
+    ]: any): ExportNamedDeclaration);
 
-  addType(state, properties, config, !parentState);
+    addShorthandExport(mainStateExport, state);
+  }
+
+  if (!parentState) {
+    addStateToRootType(state, properties, config);
+  }
 
   return newProgram;
 };

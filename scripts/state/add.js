@@ -3,9 +3,7 @@ import fs from "fs";
 import {
   createDirIfNeeded,
   getCompleteStateDir,
-  getStateFileName,
-  getTypesFileName,
-  createFileIfNeeded
+  getStateFileName
 } from "util/dir";
 import {
   findExportIndex,
@@ -13,7 +11,6 @@ import {
   findClassDeclarationIndex,
   addExpressionToProgram,
   addShorthandExport,
-  findTypeExportIndex,
   addImmutableImport,
   addImportToModule
 } from "util/program";
@@ -32,12 +29,10 @@ import type {
   VariableDeclaration,
   VariableDeclarator,
   ObjectProperty,
-  ObjectTypeProperty,
   StateProperties,
   StateProperty,
   ClassProperty,
-  ClassDeclaration,
-  TypeAlias
+  ClassDeclaration
 } from "types";
 
 export const addProperties = (
@@ -56,20 +51,6 @@ export const addProperties = (
   let program: Program = parse(fileContents).program;
 
   const classIndex: number = findClassDeclarationIndex(program, state);
-
-  const typesFileName: string = getTypesFileName(config);
-  createFileIfNeeded(getTypesFileName(config));
-
-  const typeFileContents: string = fs.readFileSync(typesFileName, {
-    encoding: "utf8"
-  });
-
-  let typesProgram: Program = parse(typeFileContents).program;
-
-  const existingTypeExportIndex: number = findTypeExportIndex(
-    typesProgram,
-    state
-  );
 
   if (classIndex === -1) {
     throw new Error(`Cannot find existing declaration for ${state}!`);
@@ -103,23 +84,6 @@ export const addProperties = (
       kind: "init"
     });
     addImmutableImport(program, property.type);
-
-    if (existingTypeExportIndex !== -1) {
-      const typeExport: ExportNamedDeclaration = ((typesProgram.body[
-        existingTypeExportIndex
-      ]: any): ExportNamedDeclaration);
-
-      const existingTypeDef: ?ObjectTypeProperty = ((typeExport.declaration: any): TypeAlias).right.properties.find(
-        (def: ObjectTypeProperty) => def.key.name === key
-      );
-
-      if (!existingTypeDef) {
-        ((typeExport.declaration: any): TypeAlias).right.properties.push(
-          toAST(`export type foo= { ${key}: ${property.type} };`, true)
-            .declaration.right.properties[0]
-        );
-      }
-    }
   });
 
   if (!parentState) {
@@ -129,10 +93,6 @@ export const addProperties = (
   const newProgramContents: string = write(program);
 
   fs.writeFileSync(stateFileName, newProgramContents);
-
-  const newTypeContents: string = write(typesProgram);
-
-  fs.writeFileSync(typesFileName, newTypeContents);
 };
 
 const getActionConstantName = (action: string): string => action.toUpperCase();

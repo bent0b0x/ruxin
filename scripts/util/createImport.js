@@ -11,7 +11,8 @@ export default (
   module: string,
   imports: Array<string>,
   defaultImport?: boolean,
-  type?: boolean
+  type?: boolean,
+  alias?: string
 ): ImportDeclaration => {
   let startLocation: number = 0;
   const importSpecifiers: Array<
@@ -37,7 +38,10 @@ export default (
       start: specifierStart,
       end: specifierEnd,
       imported: identifier,
-      local: identifier
+      local: {
+        ...identifier,
+        name: alias || importName
+      }
     };
   });
 

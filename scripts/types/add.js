@@ -1,29 +1,31 @@
 /* @flow */
 import fs from "fs";
 import { createFileIfNeeded, getTypesFileName } from "util/dir";
-import { findTypeExportIndex } from "util/program";
+import {
+  findTypeExportIndex,
+  findImportIndex,
+  addImportToModule
+} from "util/program";
 import { ASTTypes } from "constants/ApplicationConstants";
-import toAST from "util/toAST";
+import createImport from "util/createImport";
 import parse from "../parser";
 import write from "../write";
-import reduce from "lodash.reduce";
 
 import type {
+  ImportDeclaration,
   Project,
   StateProperties,
   Program,
   ExportNamedDeclaration,
-  ClassProperty,
   ObjectTypeProperty,
   ObjectTypeAnnotation,
   VariableDeclaration
 } from "types";
 
-export const addType = (
+export const addStateToRootType = (
   type: string,
   properties: StateProperties,
-  config: Project,
-  addToRoot: boolean
+  config: Project
 ): void => {
   const typesFileName: string = getTypesFileName(config);
   createFileIfNeeded(getTypesFileName(config));
@@ -34,26 +36,7 @@ export const addType = (
 
   let contents: Program = parse(fileContents).program;
 
-  if (findTypeExportIndex(contents, type) === -1) {
-    const typeExport: ExportNamedDeclaration = toAST(
-      `export type ${type} = {
-      ${reduce(
-        properties,
-        (types: string, property: ClassProperty, key: string): string => {
-          return `${types}\n${key}: ${property.type};`;
-        },
-        ""
-      )}
-    };`,
-      true
-    );
-
-    if (addToRoot) {
-      contents = updateRootStateType(type, contents);
-    }
-
-    contents.body.push(typeExport);
-  }
+  contents = updateRootStateType(type, contents);
 
   fs.writeFileSync(typesFileName, write(contents));
 };
@@ -76,6 +59,25 @@ const updateRootStateType = (state: string, program: Program): Program => {
     );
 
   if (!existingStateType) {
+    const moduleName: string = `state/${state}`;
+
+    const existingImportIndex: number = findImportIndex(program, moduleName);
+
+    const importAlias: string = `${state}State`;
+
+    if (existingImportIndex === -1) {
+      const newImport: ImportDeclaration = createImport(
+        moduleName,
+        ["State"],
+        undefined,
+        undefined,
+        importAlias
+      );
+      program.body.unshift(newImport);
+    }
+
+    addImportToModule(program, "State", moduleName);
+
     const right: ?ObjectTypeAnnotation = ((typeExport.declaration: any): VariableDeclaration)
       .right;
 
@@ -90,7 +92,7 @@ const updateRootStateType = (state: string, program: Program): Program => {
           type: ASTTypes.GenericTypeAnnotation,
           id: {
             type: ASTTypes.Identifier,
-            name: state
+            name: `${importAlias}.${state}`
           }
         }
       });

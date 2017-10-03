@@ -1,6 +1,5 @@
 /* @flow */
 import fs from "fs";
-import prettier from "prettier";
 
 import type { Project } from "types";
 
@@ -36,7 +35,7 @@ export const getTypesFileName = (config: Project): string =>
 
 export const createFileIfNeeded = (
   fileName: string,
-  initContents = ""
+  initContents: string = ""
 ): void => {
   if (!fs.existsSync(fileName)) {
     fs.writeFileSync(fileName, initContents);

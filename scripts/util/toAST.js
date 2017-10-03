@@ -1,6 +1,7 @@
+/* @flow */
 const babylon = require("babylon");
 
-export default (input: any, statement: boolean = false) => {
+export default (input: any, statement: boolean = false): Object => {
   const processedInput: string =
     input && typeof input === "string" ? `${input}` : JSON.stringify(input);
   return statement

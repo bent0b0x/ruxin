@@ -33,12 +33,12 @@ export type ASTType = $Keys<typeof ASTTypes>;
 
 export type ASTItem = {
   type: ASTType,
-  loc: {
+  loc?: {
     start: {
       line: number,
-      column: number
+      column?: number
     },
-    end: {
+    end?: {
       line: number,
       column: number
     }

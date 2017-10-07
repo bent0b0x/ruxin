@@ -4,7 +4,8 @@ import {
   getCompleteStateDir,
   getReducerFileName,
   createFileIfNeeded,
-  getTypesFileName
+  getTypesFileName,
+  setPackageDetails
 } from "util/dir";
 import copyDir from "copy-dir";
 import path from "path";
@@ -16,6 +17,8 @@ export default (config: Project) => {
   exec(`mkdir ${config.baseDir}`);
 
   copyDir.sync(path.resolve(__dirname, "../static/"), config.baseDir);
+
+  setPackageDetails(config);
 
   exec(`cd ${config.baseDir} && yarn && cd ..`);
 

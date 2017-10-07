@@ -10,7 +10,9 @@ export type StateProperty = {
 
 export type Project = {|
   baseDir: string,
-  stateDir: string
+  stateDir: string,
+  name?: string,
+  description?: string
 |};
 
 export type StateProperties = {

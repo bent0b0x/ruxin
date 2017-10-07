@@ -30,6 +30,23 @@ export const getContainersPath = (): string => `${getScriptsPath()}/containers`;
 export const getCompleteContainersDir = (config: Project): string =>
   `${config.baseDir}${getContainersPath()}`;
 
+const getCompletePackageJSONPath = (config: Project): string =>
+  `${config.baseDir}/package.json`;
+
+export const setPackageDetails = (config: Project): void => {
+  const packagePath: string = getCompletePackageJSONPath(config);
+
+  if (!fs.existsSync(packagePath)) {
+    return;
+  }
+
+  const packageObj: Object = JSON.parse(fs.readFileSync(packagePath, "utf8"));
+  packageObj.name = config.name;
+  packageObj.description = config.description;
+
+  fs.writeFileSync(packagePath, JSON.stringify(packageObj, null, "\t"));
+};
+
 export const getTypesFileName = (config: Project): string =>
   `${config.baseDir}${getScriptsPath()}/types.js`;
 

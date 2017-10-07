@@ -13,7 +13,7 @@ export const createContainer = (
   config: Project
 ): void => {
   const containersDir: string = getCompleteContainersDir(config);
-  const containerFilename: string = `${containersDir}/${name}.js`;
+  const containerFilename: string = `${containersDir}/${name}Container.js`;
 
   const stateToUse: string = parentState || state;
 
@@ -32,7 +32,7 @@ export const createContainer = (
 
   const newContainerContents: string = `
     import { connect } from 'react-redux';
-    import ${name} from 'components/${name}';
+    import ${name} from 'components/${name}Component';
 
     import type { RootState, Action } from 'scripts/types';
     import type { Dispatch } from 'redux';

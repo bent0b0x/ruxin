@@ -13,7 +13,7 @@ export const createComponent = (
   config: Project
 ): void => {
   const componentsDir: string = getCompleteComponentsDir(config);
-  const componentFileName: string = `${componentsDir}/${name}.js`;
+  const componentFileName: string = `${componentsDir}/${name}Component.js`;
 
   const stateToUse: string = parentState || state;
 

@@ -1,8 +1,6 @@
-var prompt = require("prompt");
+var prompt = require("./prompt");
 
 var getProps = (state, props = {}, dir, cb, options) => {
-  prompt.start();
-  prompt.message = "";
   prompt.get(
     {
       name: "key",

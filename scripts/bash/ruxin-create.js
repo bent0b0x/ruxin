@@ -1,11 +1,9 @@
 #!/usr/bin/env node --harmony
 var api = require("../../build/bundle");
 var program = require("commander");
-var prompt = require("prompt");
+var prompt = require("./util/prompt");
 
 program.version("0.0.0").action(function(name) {
-  prompt.start();
-  prompt.message = "";
   prompt.get(
     {
       name: "projectName",

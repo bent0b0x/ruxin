@@ -11,7 +11,8 @@ import {
   getCompleteStateDir,
   getStateFileName,
   getReducerFileName,
-  createFileIfNeeded
+  createFileIfNeeded,
+  readFileSync
 } from "util/dir";
 import {
   findExportIndex,
@@ -67,9 +68,7 @@ export const Selectors = {};
     )
   );
 
-  const fileContents: string = fs.readFileSync(stateFileName, {
-    encoding: "utf8"
-  });
+  const fileContents: string = readFileSync(stateFileName);
 
   const contents: File = parse(fileContents);
 
@@ -201,9 +200,7 @@ const getOrCreateReducerFile = (config: Project): Program => {
 
   createFileIfNeeded(reducerFileName);
 
-  let fileContents: string = fs.readFileSync(reducerFileName, {
-    encoding: "utf8"
-  });
+  let fileContents: string = readFileSync(reducerFileName);
 
   let contents: Program = parse(fileContents).program;
 

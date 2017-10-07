@@ -1,6 +1,6 @@
 /* @flow */
 import fs from "fs";
-import { createFileIfNeeded, getTypesFileName } from "util/dir";
+import { createFileIfNeeded, getTypesFileName, readFileSync } from "util/dir";
 import {
   findTypeExportIndex,
   findImportIndex,
@@ -30,9 +30,7 @@ export const addStateToRootType = (
   const typesFileName: string = getTypesFileName(config);
   createFileIfNeeded(getTypesFileName(config));
 
-  const fileContents: string = fs.readFileSync(typesFileName, {
-    encoding: "utf8"
-  });
+  const fileContents: string = readFileSync(typesFileName);
 
   let contents: Program = parse(fileContents).program;
 

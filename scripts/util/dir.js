@@ -9,6 +9,11 @@ export const createDirIfNeeded = (dirName: string): void => {
   }
 };
 
+export const readFileSync = (path: string) =>
+  fs.readFileSync(path, {
+    encoding: "utf8"
+  });
+
 export const getScriptsPath = (): string => "/app/scripts";
 
 export const getCompleteStateDir = (config: Project): string =>
@@ -40,7 +45,7 @@ export const setPackageDetails = (config: Project): void => {
     return;
   }
 
-  const packageObj: Object = JSON.parse(fs.readFileSync(packagePath, "utf8"));
+  const packageObj: Object = JSON.parse(readFileSync(packagePath));
   packageObj.name = config.name;
   packageObj.description = config.description;
 

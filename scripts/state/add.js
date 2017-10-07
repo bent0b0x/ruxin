@@ -3,7 +3,8 @@ import fs from "fs";
 import {
   createDirIfNeeded,
   getCompleteStateDir,
-  getStateFileName
+  getStateFileName,
+  readFileSync
 } from "util/dir";
 import {
   findExportIndex,
@@ -44,9 +45,7 @@ export const addProperties = (
   const stateFile: string = parentState || state;
   const stateFileName: string = getStateFileName(config, stateFile);
 
-  const fileContents: string = fs.readFileSync(stateFileName, {
-    encoding: "utf8"
-  });
+  const fileContents: string = readFileSync(stateFileName);
 
   let program: Program = parse(fileContents).program;
 
@@ -192,9 +191,7 @@ export const addAction = (
     throw new Error("State does not exist");
   }
 
-  const fileContents: string = fs.readFileSync(stateFileName, {
-    encoding: "utf8"
-  });
+  const fileContents: string = readFileSync(stateFileName);
 
   let contents: Program = parse(fileContents).program;
 
